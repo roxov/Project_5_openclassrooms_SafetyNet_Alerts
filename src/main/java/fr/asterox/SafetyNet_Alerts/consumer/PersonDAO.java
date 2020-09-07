@@ -1,4 +1,4 @@
-package fr.asterox.SafetyNet_Alerts.dao;
+package fr.asterox.SafetyNet_Alerts.consumer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
  *
  */
 @Repository
-public class PersonDAO {
+public class PersonDAO implements IPersonDAO {
 	public static List<Person> persons = new ArrayList<>();
 	static {
 		persons.add(0, new Person());

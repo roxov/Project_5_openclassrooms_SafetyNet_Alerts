@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.asterox.SafetyNet_Alerts.dao.PersonDAO;
+import fr.asterox.SafetyNet_Alerts.consumer.PersonDAO;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 
 @RestController
-public class EndpointsController {
+public class DataUpdateController {
+//TODO : Mettre les URI et les requêtes attendues
 
 	@Autowired
 	private PersonDAO personDAO;
