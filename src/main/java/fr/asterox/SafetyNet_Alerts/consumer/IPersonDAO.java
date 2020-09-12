@@ -1,5 +1,7 @@
 package fr.asterox.SafetyNet_Alerts.consumer;
 
-public interface IPersonDAO {
+import fr.asterox.SafetyNet_Alerts.model.Person;
 
+public interface IPersonDAO {
+	public Person emailList(String city);
 }

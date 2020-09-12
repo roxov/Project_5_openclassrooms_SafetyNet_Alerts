@@ -1,0 +1,40 @@
+package fr.asterox.SafetyNet_Alerts.web;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
+import fr.asterox.SafetyNet_Alerts.service.MedicalRecordsService;
+
+/**
+ * 
+ * Process the requests concerning medical records.
+ *
+ */
+
+@RestController
+public class MedicalRecordsController {
+
+	@Autowired
+	private MedicalRecordsService medicalRecordsService;
+
+	@PostMapping(value = "/medicalRecord")
+	public void addMedicalRecords(@RequestBody MedicalRecords medicalRecords) {
+		medicalRecordsService.addMedicalRecords(medicalRecords);
+	}
+
+	@PutMapping(value = "/medicalRecord")
+	public void updateMedicalRecords(@RequestBody MedicalRecords medicalRecords) {
+		medicalRecordsService.updateMedicalRecords(medicalRecords);
+	}
+
+	@DeleteMapping(value = "/medicalRecord")
+	public void deleteMedicalRecords(@RequestBody MedicalRecords medicalRecords) {
+		medicalRecordsService.deleteMedicalRecords(medicalRecords);
+	}
+
+}
