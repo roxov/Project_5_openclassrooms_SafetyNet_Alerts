@@ -24,11 +24,16 @@ public class FirestationsControllerTest {
 	private static FirestationsService firestationsService;
 
 	public void givenAPhonesList_whenCallingService_thenReturnThePhonesList() {
+		// ARRANGE
 		List<String> phonesList = new ArrayList<>();
 		phonesList.add("0285858585");
 		phonesList.add("0354545454");
 		when(firestationsService.getPhonesListAssignedToFirestation(anyInt())).thenReturn(phonesList);
+
+		// ASSERT
 		List<String> result = firestationsController.getPhonesListAssignedToFirestation(2);
+
+		// ACT
 		assertEquals(phonesList, result);
 	}
 

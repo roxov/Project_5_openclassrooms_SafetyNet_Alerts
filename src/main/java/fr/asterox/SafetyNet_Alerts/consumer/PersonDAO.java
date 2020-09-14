@@ -6,10 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import fr.asterox.SafetyNet_Alerts.model.Address;
-import fr.asterox.SafetyNet_Alerts.model.Data;
-import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 import fr.asterox.SafetyNet_Alerts.model.Person;
+import fr.asterox.SafetyNet_Alerts.technical.dataCreation.Data;
 
 /**
  * 
@@ -30,9 +28,8 @@ public class PersonDAO implements IPersonDAO {
 				return person;
 			}
 		}
-		Person person2 = new Person("Julie", "Cocotte", "44", new Address(), 25454555, "hello@moi.fr",
-				new MedicalRecords());
-		return person2;
+
+		return null;
 	}
 
 	public void addPerson(Person person) {

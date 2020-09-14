@@ -1,11 +1,13 @@
 package fr.asterox.SafetyNet_Alerts.model;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+
 public class Person {
-	private String firstName;
-	private String lastName;
-	private String birthdate;
+	private Map<String, String> firstAndLastNamesMap;
+	private LocalDateTime birthdate;
 	private Address address;
-	private int phone;
+	private String phone;
 	private String email;
 	private MedicalRecords medicalRecords;
 
@@ -14,11 +16,11 @@ public class Person {
 	}
 
 // Constructeur pour les tests
-	public Person(String firstName, String lastName, String birthdate, Address address, int phone, String email,
-			MedicalRecords medicalRecords) {
+
+	public Person(Map<String, String> firstAndLastNamesMap, LocalDateTime birthdate, Address address, String phone,
+			String email, MedicalRecords medicalRecords) {
 		super();
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this.firstAndLastNamesMap = firstAndLastNamesMap;
 		this.birthdate = birthdate;
 		this.address = address;
 		this.phone = phone;
@@ -26,27 +28,19 @@ public class Person {
 		this.medicalRecords = medicalRecords;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public Map<String, String> getFirstAndLastNamesMap() {
+		return firstAndLastNamesMap;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setFirstAndLastNamesMap(Map<String, String> firstAndLastNamesMap) {
+		this.firstAndLastNamesMap = firstAndLastNamesMap;
 	}
 
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getBirthdate() {
+	public LocalDateTime getBirthdate() {
 		return birthdate;
 	}
 
-	public void setBirthdate(String birthdate) {
+	public void setBirthdate(LocalDateTime birthdate) {
 		this.birthdate = birthdate;
 	}
 
@@ -58,11 +52,11 @@ public class Person {
 		this.address = address;
 	}
 
-	public int getPhone() {
+	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(int phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 

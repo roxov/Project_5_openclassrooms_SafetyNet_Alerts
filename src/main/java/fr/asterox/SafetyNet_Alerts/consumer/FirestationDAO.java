@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
+import fr.asterox.SafetyNet_Alerts.technical.dataCreation.Data;
 
 @Repository
 public class FirestationDAO implements IFirestationDAO {
