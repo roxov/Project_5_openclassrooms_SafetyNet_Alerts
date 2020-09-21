@@ -14,8 +14,8 @@ public class FirestationDAO implements IFirestationDAO {
 	@Autowired
 	private Data data;
 
-	public List<String> getPhonesListAssignedToFirestation(int stationNumber) {
-		return null;
+	public List<Firestation> getFirestationsList() {
+		return data.getFirestationsList();
 	}
 
 	@Override

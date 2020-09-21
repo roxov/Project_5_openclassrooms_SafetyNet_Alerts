@@ -34,7 +34,7 @@ public class PersonsController {
 	@GetMapping(value = "/personInfo")
 	public MappingJacksonValue getInhabitantsInfo(@RequestParam String firstName, String lastName) {
 
-//TODO : tester les filtres ?
+		// TODO : tester les filtres ?
 		List<Person> personsList = personsService.getInhabitantsInfo(firstName, lastName);
 		// TODO : retourner l'age et non la date de naissance
 

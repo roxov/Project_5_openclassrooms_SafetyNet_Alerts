@@ -1,6 +1,7 @@
 package fr.asterox.SafetyNet_Alerts.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -24,10 +26,10 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
 public class PersonsServiceTest {
 
 	private static PersonsService personsService;
-	List<Person> personsList;
-	LocalDateTime birthdate;
-	Address address;
-	MedicalRecords medicalRecords;
+	private static List<Person> personsList;
+	private static LocalDateTime birthdate;
+	private static Address address;
+	private static MedicalRecords medicalRecords;
 
 	@Mock
 	private static PersonDAO personDAO;
@@ -60,7 +62,7 @@ public class PersonsServiceTest {
 		List<Person> result = personsService.getInhabitantsInfo("fname1", "lname1");
 
 		// THEN
-		// verify(personDAO, Mockito.times(1)).getPersonsList(anyList(Person.class));
+		verify(personDAO, Mockito.times(1)).getPersonsList();
 		assertEquals(personsList, result);
 	}
 
@@ -75,7 +77,7 @@ public class PersonsServiceTest {
 		List<Person> result = personsService.getInhabitantsInfo("fname2", "lname2");
 
 		// THEN
-		// verify(personDAO, Mockito.times(1)).getPersonsList(anyList(class<Person>));
+		verify(personDAO, Mockito.times(1)).getPersonsList();
 		List<Person> personsListResult = new ArrayList<>();
 		personsListResult.add(person2);
 		assertEquals(personsListResult, result);
@@ -87,13 +89,13 @@ public class PersonsServiceTest {
 		Address address2 = new Address("street", 123, "city2");
 		Person person2 = new Person("fname2", "lname2", birthdate, address2, "phone2", "email2", medicalRecords);
 		personsList.add(person2);
+		when(personDAO.getPersonsList()).thenReturn(personsList);
 
 		// WHEN
 		List<Person> result = personsService.getPersonsListOfCity("city2");
 
 		// THEN
-		// verify(personDAO,
-		// Mockito.times(1)).getPersonsListOfCity(anyListOf(Person.class));
+		verify(personDAO, Mockito.times(1)).getPersonsList();
 		List<Person> personsListResult = new ArrayList<>();
 		personsListResult.add(person2);
 		assertEquals(personsListResult, result);
