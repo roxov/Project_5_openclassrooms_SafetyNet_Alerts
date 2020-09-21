@@ -10,7 +10,8 @@ import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import fr.asterox.SafetyNet_Alerts.technical.dataCreation.Data;
+import fr.asterox.SafetyNet_Alerts.model.Data;
+import fr.asterox.SafetyNet_Alerts.technical.dataCreation.GenerateHardCodedData;
 
 @SpringBootApplication
 public class SafetyNetAlertsApplication {
@@ -24,7 +25,8 @@ public class SafetyNetAlertsApplication {
 
 	@Bean
 	public Data getData() {
-		return new Data();
+
+		return GenerateHardCodedData.generateData();
 	}
 
 	@Bean

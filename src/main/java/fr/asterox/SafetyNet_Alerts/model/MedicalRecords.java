@@ -1,32 +1,34 @@
 package fr.asterox.SafetyNet_Alerts.model;
 
+import java.util.List;
+
 public class MedicalRecords {
-	private String medications;
-	private String allergies;
+	private List<String> medications;
+	private List<String> allergies;
 
 	public MedicalRecords() {
 		super();
 	}
 
-	public MedicalRecords(String medications, String allergies) {
+	public MedicalRecords(List<String> medications, List<String> allergies) {
 		super();
 		this.medications = medications;
 		this.allergies = allergies;
 	}
 
-	public String getMedications() {
+	public List<String> getMedications() {
 		return medications;
 	}
 
-	public void setMedications(String medications) {
+	public void setMedications(List<String> medications) {
 		this.medications = medications;
 	}
 
-	public String getAllergies() {
+	public List<String> getAllergies() {
 		return allergies;
 	}
 
-	public void setAllergies(String allergies) {
+	public void setAllergies(List<String> allergies) {
 		this.allergies = allergies;
 	}
 

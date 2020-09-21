@@ -1,19 +1,26 @@
 package fr.asterox.SafetyNet_Alerts.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Firestation {
-	private List<Address> adressesList = new ArrayList<>();
 	private int stationNumber;
+	private List<Address> adressesList;
 
 	public Firestation() {
 		super();
 	}
 
-	public Firestation(List<Address> adressesList, int stationNumber) {
+	public Firestation(int stationNumber, List<Address> adressesList) {
 		super();
 		this.adressesList = adressesList;
+		this.stationNumber = stationNumber;
+	}
+
+	public int getStationNumber() {
+		return stationNumber;
+	}
+
+	public void setStationNumber(int stationNumber) {
 		this.stationNumber = stationNumber;
 	}
 
@@ -23,14 +30,6 @@ public class Firestation {
 
 	public void setAdressesList(List<Address> adressesList) {
 		this.adressesList = adressesList;
-	}
-
-	public int getStationNumber() {
-		return stationNumber;
-	}
-
-	public void setStationNumber(int stationNumber) {
-		this.stationNumber = stationNumber;
 	}
 
 }

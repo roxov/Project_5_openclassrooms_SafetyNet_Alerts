@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Person;
-import fr.asterox.SafetyNet_Alerts.technical.dataCreation.Data;
 
 /**
  * 
@@ -22,23 +22,20 @@ public class PersonDAO implements IPersonDAO {
 	private Data data;
 
 	@Override
-	public Person emailList(String city) {
-		for (Person person : persons) {
-			if (person.getAddress().equals(city)) {
-				return person;
-			}
-		}
-
-		return null;
+	public List<Person> getPersonsList() {
+		return data.getPersonsList();
 	}
 
+	@Override
 	public void addPerson(Person person) {
 		// TODO : Mapping nom/prénom
 	}
 
+	@Override
 	public void updatePerson(Person person) {
 	}
 
+	@Override
 	public void deletePerson(Person person) {
 	}
 

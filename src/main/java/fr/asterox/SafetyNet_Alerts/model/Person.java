@@ -1,10 +1,13 @@
 package fr.asterox.SafetyNet_Alerts.model;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
+@JsonFilter("personsInfoFilter")
 public class Person {
-	private Map<String, String> firstAndLastNamesMap;
+	private String firstName;
+	private String lastName;
 	private LocalDateTime birthdate;
 	private Address address;
 	private String phone;
@@ -17,10 +20,11 @@ public class Person {
 
 // Constructeur pour les tests
 
-	public Person(Map<String, String> firstAndLastNamesMap, LocalDateTime birthdate, Address address, String phone,
+	public Person(String firstName, String lastName, LocalDateTime birthdate, Address address, String phone,
 			String email, MedicalRecords medicalRecords) {
 		super();
-		this.firstAndLastNamesMap = firstAndLastNamesMap;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.birthdate = birthdate;
 		this.address = address;
 		this.phone = phone;
@@ -28,12 +32,20 @@ public class Person {
 		this.medicalRecords = medicalRecords;
 	}
 
-	public Map<String, String> getFirstAndLastNamesMap() {
-		return firstAndLastNamesMap;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFirstAndLastNamesMap(Map<String, String> firstAndLastNamesMap) {
-		this.firstAndLastNamesMap = firstAndLastNamesMap;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public LocalDateTime getBirthdate() {
