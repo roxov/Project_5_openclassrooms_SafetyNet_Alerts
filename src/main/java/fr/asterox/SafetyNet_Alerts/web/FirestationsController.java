@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
+import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.service.FirestationsService;
 import fr.asterox.SafetyNet_Alerts.service.HouseholdsService;
 
@@ -36,11 +37,6 @@ public class FirestationsController {
 	@Autowired
 	private HouseholdsService householdsService;
 
-//	@GetMapping(value = "/phoneAlert")
-//	public List<String> getPhonesListAssignedToFirestation(@RequestParam int firestation) {
-//		return firestationsService.getPhonesListAssignedToFirestation(firestation);
-//	}
-
 	/*
 	 * @GetMapping(value = "/firestation") public Person emailList(@RequestParam int
 	 * stationNumber) { return firestationService(stationNumber); }
@@ -51,6 +47,17 @@ public class FirestationsController {
 	 * emailList(@RequestParam int firestation) { return
 	 * firestationService(firestation); }
 	 */
+
+	@GetMapping(value = "/phoneAlert")
+	public MappingJacksonValue getPhonesListAssignedToFirestation(@RequestParam int firestation) {
+		List<Person> personsList = firestationsService.getPersonsServedByStation(firestation);
+		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "birthdate",
+				"address", "email", "medicalRecords");
+		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
+		MappingJacksonValue personsFilter = new MappingJacksonValue(personsList);
+		personsFilter.setFilters(filterList);
+		return personsFilter;
+	}
 
 	@GetMapping(value = "/flood/stations")
 	public MappingJacksonValue getHouseholdsServedByStations(@RequestParam List<Integer> stations) {
