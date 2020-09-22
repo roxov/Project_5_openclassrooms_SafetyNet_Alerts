@@ -20,7 +20,6 @@ import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.service.FirestationsService;
-import fr.asterox.SafetyNet_Alerts.service.HouseholdsService;
 
 /**
  * 
@@ -30,12 +29,9 @@ import fr.asterox.SafetyNet_Alerts.service.HouseholdsService;
 
 @RestController
 public class FirestationsController {
-	// TODO ajouter des filtres dynamiques ?
 
 	@Autowired
 	private FirestationsService firestationsService;
-	@Autowired
-	private HouseholdsService householdsService;
 
 	@GetMapping(value = "/firestation")
 	public MappingJacksonValue getInfoForPersonsServedByStation(@RequestParam int stationNumber) {
@@ -61,7 +57,8 @@ public class FirestationsController {
 
 	@GetMapping(value = "/flood/stations")
 	public MappingJacksonValue getHouseholdsServedByStations(@RequestParam List<Integer> stations) {
-		List<Household> householdsList = householdsService.getHouseholdsServedByStations(stations);
+		// TODO : add age
+		List<Household> householdsList = firestationsService.getHouseholdsServedByStations(stations);
 		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "address",
 				"email");
 		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);

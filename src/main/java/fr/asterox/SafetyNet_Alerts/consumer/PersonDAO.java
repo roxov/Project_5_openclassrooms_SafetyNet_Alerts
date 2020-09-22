@@ -1,6 +1,5 @@
 package fr.asterox.SafetyNet_Alerts.consumer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
  */
 @Repository
 public class PersonDAO implements IPersonDAO {
-	public static List<Person> persons = new ArrayList<>();
 
 	@Autowired
 	private Data data;
@@ -28,7 +26,6 @@ public class PersonDAO implements IPersonDAO {
 
 	@Override
 	public void addPerson(Person person) {
-		// TODO : Mapping nom/prénom
 	}
 
 	@Override

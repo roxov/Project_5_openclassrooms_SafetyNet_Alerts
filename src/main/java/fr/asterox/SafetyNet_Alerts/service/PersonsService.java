@@ -1,13 +1,17 @@
 package fr.asterox.SafetyNet_Alerts.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.asterox.SafetyNet_Alerts.consumer.PersonDAO;
 import fr.asterox.SafetyNet_Alerts.model.Person;
+import fr.asterox.SafetyNet_Alerts.technical.ManipulateDate;
 
 @Service
 public class PersonsService implements IPersonsService {
@@ -16,15 +20,19 @@ public class PersonsService implements IPersonsService {
 	private PersonDAO personDAO;
 
 	@Override
-	public List<Person> getInhabitantsInfo(String firstName, String lastName) {
+	public Map<Person, String> getInhabitantsInfo(String firstName, String lastName) {
 		List<Person> allPersonsList = personDAO.getPersonsList();
-		List<Person> personsSelectedByLastNameList = new ArrayList<>();
+		Map<Person, String> personsSelectedByLastNameList = new HashMap<>();
 		for (Person person : allPersonsList) {
 			if (person.getLastName().equals(lastName)) {
-				personsSelectedByLastNameList.add(person);
+				LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
+				Integer age = LocalDate.now().getYear() - birthdate.getYear();
+				String ageSt = age + " years old";
+				personsSelectedByLastNameList.put(person, ageSt);
 			}
 		}
-		return personDAO.getPersonsList();
+		return personsSelectedByLastNameList;
+		// TODO : renvoie une person 2c3d...
 	}
 
 	@Override

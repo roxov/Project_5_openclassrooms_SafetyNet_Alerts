@@ -9,7 +9,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.asterox.SafetyNet_Alerts.consumer.AddressDAO;
 import fr.asterox.SafetyNet_Alerts.consumer.FirestationDAO;
 import fr.asterox.SafetyNet_Alerts.consumer.HouseholdDAO;
 import fr.asterox.SafetyNet_Alerts.model.Address;
@@ -22,12 +21,11 @@ import fr.asterox.SafetyNet_Alerts.technical.ManipulateDate;
 public class AddressesService implements IAddressesService {
 
 	@Autowired
-	public AddressDAO addressDAO;
-	@Autowired
 	public HouseholdDAO householdDAO;
 	@Autowired
 	public FirestationDAO firestationDAO;
 
+	@Override
 	public Object[] getPersonsLivingInChildHousehold(String street) {
 		List<Person> personsInHousehold = new ArrayList<>();
 		Map<Person, Integer> childrenInHousehold = new HashMap<Person, Integer>();
@@ -56,7 +54,9 @@ public class AddressesService implements IAddressesService {
 		return new Object[] { childrenInHousehold, adultsInHousehold };
 	}
 
+	@Override
 	public Object[] getInhabitantsAndStationOfTheAddress(String street) {
+		Map<Person, String> InhabitantsInfoMap = new HashMap<Person, String>();
 		List<Person> inhabitantsList = new ArrayList<>();
 		Integer stationNumber = null;
 
@@ -64,6 +64,14 @@ public class AddressesService implements IAddressesService {
 		for (Household household : householdsList) {
 			if (household.getAddress().getStreet().equals(street)) {
 				inhabitantsList = household.getPersonsList();
+				for (Person person : inhabitantsList) {
+					LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
+					Integer age = LocalDate.now().getYear() - birthdate.getYear();
+					String ageSt = age + " years old";
+					InhabitantsInfoMap.put(person, ageSt);
+					// TODO : affiche person@2c3d... La Map ne peut pas être transformée par Jackson
+					// (tableau ou liste)
+				}
 				break;
 			}
 		}
@@ -77,8 +85,7 @@ public class AddressesService implements IAddressesService {
 					break;
 				}
 			}
-
 		}
-		return new Object[] { inhabitantsList, stationNumber };
+		return new Object[] { InhabitantsInfoMap, stationNumber };
 	}
 }

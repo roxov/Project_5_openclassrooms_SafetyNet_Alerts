@@ -1,6 +1,7 @@
 package fr.asterox.SafetyNet_Alerts.web;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -35,10 +36,9 @@ public class PersonsController {
 	public MappingJacksonValue getInhabitantsInfo(@RequestParam String firstName, String lastName) {
 
 		// TODO : tester les filtres ?
-		List<Person> personsList = personsService.getInhabitantsInfo(firstName, lastName);
-		// TODO : retourner l'age et non la date de naissance
-
-		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "phone");
+		Map<Person, String> personsList = personsService.getInhabitantsInfo(firstName, lastName);
+		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "birthdate",
+				"phone");
 		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
 		MappingJacksonValue personsFilter = new MappingJacksonValue(personsList);
 		personsFilter.setFilters(filterList);

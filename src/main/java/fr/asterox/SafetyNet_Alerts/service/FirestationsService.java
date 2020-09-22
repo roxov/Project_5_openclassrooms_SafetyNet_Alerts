@@ -25,6 +25,7 @@ public class FirestationsService implements IFirestationsService {
 	@Autowired
 	public HouseholdDAO householdDAO;
 
+	@Override
 	public Object[] getInfoOnPersonsServedByStation(int stationNumber) {
 		List<Person> personsServedByStationList = new ArrayList<>();
 		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
@@ -60,6 +61,7 @@ public class FirestationsService implements IFirestationsService {
 		return new Object[] { personsServedByStationList, childrenAndAdultCount };
 	}
 
+	@Override
 	public List<Person> getPersonsServedByStation(int stationNumber) {
 		List<Person> personsServedByStationList = new ArrayList<>();
 		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
@@ -81,14 +83,39 @@ public class FirestationsService implements IFirestationsService {
 		return personsServedByStationList;
 	}
 
+	@Override
+	public List<Household> getHouseholdsServedByStations(List<Integer> stationNumbersList) {
+		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
+		List<Household> allHouseholdsList = householdDAO.getHouseholdsList();
+		List<Household> householdsServedByStationsList = new ArrayList<>();
+		for (Integer i : stationNumbersList) {
+			for (Firestation firestation : allFirestationsList) {
+				Integer stationNumber = firestation.getStationNumber();
+				if (stationNumber.equals(i)) {
+					List<Address> addressesServedByStation = firestation.getAdressesList();
+					for (Address address : addressesServedByStation)
+						for (Household household : allHouseholdsList) {
+							if (household.getAddress().equals(address)) {
+								householdsServedByStationsList.add(household);
+							}
+						}
+				}
+			}
+		}
+		return householdsServedByStationsList;
+	}
+
+	@Override
 	public void addFirestation(Firestation firestation) {
 		firestationDAO.addFirestation(firestation);
 	}
 
+	@Override
 	public void updateFirestation(Firestation firestation) {
 		firestationDAO.updateFirestation(firestation);
 	}
 
+	@Override
 	public void deleteFirestation(Firestation firestation) {
 		firestationDAO.deleteFirestation(firestation);
 	}

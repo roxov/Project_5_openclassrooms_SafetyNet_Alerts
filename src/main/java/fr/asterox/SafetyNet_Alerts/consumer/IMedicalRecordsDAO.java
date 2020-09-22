@@ -2,6 +2,12 @@ package fr.asterox.SafetyNet_Alerts.consumer;
 
 import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 
+/**
+ * 
+ * Update or get medical records.
+ *
+ */
+
 public interface IMedicalRecordsDAO {
 	public void addMedicalRecords(MedicalRecords medicalRecords);
 

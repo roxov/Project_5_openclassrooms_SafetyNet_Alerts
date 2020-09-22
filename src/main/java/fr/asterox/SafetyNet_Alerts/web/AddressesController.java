@@ -38,8 +38,8 @@ public class AddressesController {
 	@GetMapping(value = "/fire")
 	public MappingJacksonValue getInhabitantsAndStationOfTheAddress(@RequestParam String address) {
 		Object[] householdsList = addressesService.getInhabitantsAndStationOfTheAddress(address);
-		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "address",
-				"phone", "email");
+		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "birthdate",
+				"address", "phone", "email");
 		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
 		MappingJacksonValue personsFilter = new MappingJacksonValue(householdsList);
 		personsFilter.setFilters(filterList);

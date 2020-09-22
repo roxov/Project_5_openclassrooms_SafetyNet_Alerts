@@ -9,11 +9,12 @@ import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 
 @Repository
-public class HouseholdDAO {
+public class HouseholdDAO implements IHouseholdDAO {
 
 	@Autowired
 	private Data data;
 
+	@Override
 	public List<Household> getHouseholdsList() {
 		return data.getHouseholdsList();
 	}
