@@ -1,14 +1,12 @@
 package fr.asterox.SafetyNet_Alerts.model;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 
 @JsonFilter("personsInfoFilter")
 public class Person {
 	private String firstName;
 	private String lastName;
-	private LocalDateTime birthdate;
+	private String birthdate;
 	private Address address;
 	private String phone;
 	private String email;
@@ -20,8 +18,8 @@ public class Person {
 
 // Constructeur pour les tests
 
-	public Person(String firstName, String lastName, LocalDateTime birthdate, Address address, String phone,
-			String email, MedicalRecords medicalRecords) {
+	public Person(String firstName, String lastName, String birthdate, Address address, String phone, String email,
+			MedicalRecords medicalRecords) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -48,11 +46,11 @@ public class Person {
 		this.lastName = lastName;
 	}
 
-	public LocalDateTime getBirthdate() {
+	public String getBirthdate() {
 		return birthdate;
 	}
 
-	public void setBirthdate(LocalDateTime birthdate) {
+	public void setBirthdate(String birthdate) {
 		this.birthdate = birthdate;
 	}
 

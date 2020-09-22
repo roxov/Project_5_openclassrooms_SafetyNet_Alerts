@@ -24,10 +24,16 @@ public class AddressesController {
 	@Autowired
 	private AddressesService addressesService;
 
-	/*
-	 * @GetMapping(value = "/childAlert") public Person emailList(@RequestParam
-	 * Address address) { return adressesService(address); }
-	 */
+	@GetMapping(value = "/childAlert")
+	public MappingJacksonValue getPersonsLivingInChildHousehold(@RequestParam String address) {
+		Object[] personsLivingInChildHousehold = addressesService.getPersonsLivingInChildHousehold(address);
+		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "address",
+				"phone", "email");
+		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
+		MappingJacksonValue personsFilter = new MappingJacksonValue(personsLivingInChildHousehold);
+		personsFilter.setFilters(filterList);
+		return personsFilter;
+	}
 
 	@GetMapping(value = "/fire")
 	public MappingJacksonValue getInhabitantsAndStationOfTheAddress(@RequestParam String address) {

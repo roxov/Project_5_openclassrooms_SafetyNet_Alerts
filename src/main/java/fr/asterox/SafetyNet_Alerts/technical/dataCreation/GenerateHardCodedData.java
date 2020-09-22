@@ -1,6 +1,5 @@
 package fr.asterox.SafetyNet_Alerts.technical.dataCreation;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +23,7 @@ public class GenerateHardCodedData {
 		allergies.add("allergies1");
 		allergies.add("allergies2");
 		MedicalRecords medicalRecords = new MedicalRecords(medications, allergies);
-		Person person1 = new Person("fname2", "lname2", LocalDateTime.now(), address1, "phone2", "email2",
-				medicalRecords);
+		Person person1 = new Person("fname2", "lname2", "03/06/2010", address1, "phone2", "email2", medicalRecords);
 		List<Person> personsList = new ArrayList<>();
 		personsList.add(person1);
 		List<Person> personsList2 = new ArrayList<>();

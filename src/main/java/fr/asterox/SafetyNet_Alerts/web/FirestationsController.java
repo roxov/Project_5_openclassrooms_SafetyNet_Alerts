@@ -37,16 +37,16 @@ public class FirestationsController {
 	@Autowired
 	private HouseholdsService householdsService;
 
-	/*
-	 * @GetMapping(value = "/firestation") public Person emailList(@RequestParam int
-	 * stationNumber) { return firestationService(stationNumber); }
-	 */
-
-	/*
-	 * @GetMapping(value = "/firestation/stations") public Person
-	 * emailList(@RequestParam int firestation) { return
-	 * firestationService(firestation); }
-	 */
+	@GetMapping(value = "/firestation")
+	public MappingJacksonValue getInfoForPersonsServedByStation(@RequestParam int stationNumber) {
+		Object[] personsList = firestationsService.getInfoOnPersonsServedByStation(stationNumber);
+		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("birthdate",
+				"medicalRecords");
+		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
+		MappingJacksonValue personsFilter = new MappingJacksonValue(personsList);
+		personsFilter.setFilters(filterList);
+		return personsFilter;
+	}
 
 	@GetMapping(value = "/phoneAlert")
 	public MappingJacksonValue getPhonesListAssignedToFirestation(@RequestParam int firestation) {

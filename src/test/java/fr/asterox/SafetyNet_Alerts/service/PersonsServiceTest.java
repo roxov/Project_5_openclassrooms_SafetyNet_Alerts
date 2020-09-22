@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,6 @@ public class PersonsServiceTest {
 
 	private static PersonsService personsService;
 	private static List<Person> personsList;
-	private static LocalDateTime birthdate;
 	private static Address address;
 	private static MedicalRecords medicalRecords;
 
@@ -36,7 +34,6 @@ public class PersonsServiceTest {
 
 	@BeforeEach
 	private void setUpPerTest() {
-		birthdate = LocalDateTime.now();
 		address = new Address("street", 123, "city");
 		List<String> medications = new ArrayList<>();
 		medications.add("med1");
@@ -47,14 +44,14 @@ public class PersonsServiceTest {
 		medicalRecords = new MedicalRecords(medications, allergies);
 
 		personsList = new ArrayList<>();
-		Person person1 = new Person("fname1", "lname1", birthdate, address, "phone1", "email1", medicalRecords);
+		Person person1 = new Person("fname1", "lname1", "01/01/1990", address, "phone1", "email1", medicalRecords);
 		personsList.add(person1);
 	}
 
 	@Test
 	public void givenAListOfPersonsWithSameLastName_whenGetInhabitantsInfo_thenReturnTheListOfPersons() {
 		// GIVEN
-		Person person2 = new Person("fname2", "lname1", birthdate, address, "phone2", "email2", medicalRecords);
+		Person person2 = new Person("fname2", "lname1", "01/01/1990", address, "phone2", "email2", medicalRecords);
 		personsList.add(person2);
 		when(personDAO.getPersonsList()).thenReturn(personsList);
 
@@ -69,7 +66,7 @@ public class PersonsServiceTest {
 	@Test
 	public void givenAListOfTwoPersonsWithDifferentLastName_whenGetInhabitantsInfo_thenReturnTheListOfOnePerson() {
 		// GIVEN
-		Person person2 = new Person("fname2", "lname2", birthdate, address, "phone2", "email2", medicalRecords);
+		Person person2 = new Person("fname2", "lname2", "01/01/1990", address, "phone2", "email2", medicalRecords);
 		personsList.add(person2);
 		when(personDAO.getPersonsList()).thenReturn(personsList);
 
@@ -87,7 +84,7 @@ public class PersonsServiceTest {
 	public void givenListOfTwoPersonsFromDifferentCities_whenGetPersonsListOfCity_thenReturnAListOfOnePerson() {
 		// GIVEN
 		Address address2 = new Address("street", 123, "city2");
-		Person person2 = new Person("fname2", "lname2", birthdate, address2, "phone2", "email2", medicalRecords);
+		Person person2 = new Person("fname2", "lname2", "01/01/1990", address2, "phone2", "email2", medicalRecords);
 		personsList.add(person2);
 		when(personDAO.getPersonsList()).thenReturn(personsList);
 

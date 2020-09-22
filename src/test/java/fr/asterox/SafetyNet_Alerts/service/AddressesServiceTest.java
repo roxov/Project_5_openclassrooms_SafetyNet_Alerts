@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,24 +30,77 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
 public class AddressesServiceTest {
 
 	private static AddressesService addressesService;
-	private static LocalDateTime birthdate;
 
 	@Mock
 	private static HouseholdDAO householdDAO;
 	private static FirestationDAO firestationDAO;
 
 	@Test
+	public void givenAChildAndAnAdultInHousehold_whenGetPersonsLivingInChildHousehold_thenReturnChildAndAdultInfo() {
+		// GIVEN
+		Address address1 = new Address("street1", 123, "city1");
+		List<Person> personsList = new ArrayList<>();
+		Person person1 = new Person("childname1", "lname1", "01/01/2012", address1, "phone1", "email1",
+				new MedicalRecords());
+		Person person2 = new Person("adultname2", "lname2", "01/01/1980", address1, "phone2", "email2",
+				new MedicalRecords());
+		personsList.add(person1);
+		personsList.add(person2);
+		Household household1 = new Household(address1, personsList);
+		List<Household> householdsList = new ArrayList<>();
+		householdsList.add(household1);
+
+		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
+
+		// WHEN
+		Object[] result = addressesService.getPersonsLivingInChildHousehold("street1");
+
+		// THEN
+		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
+		List<Person> adultsList = new ArrayList<>();
+		adultsList.add(person2);
+		Map<Person, Integer> childrenMap = new HashMap<>();
+		Integer childrenAge = LocalDate.now().getYear() - 2012;
+		childrenMap.put(person1, childrenAge);
+		Object[] objectResult = new Object[] { childrenMap, adultsList };
+		assertEquals(objectResult, result);
+	}
+
+	@Test
+	public void givenNoChildInHousehold_whenGetPersonsLivingInChildHousehold_thenReturnEmptyObject() {
+		// GIVEN
+		Address address1 = new Address("street1", 123, "city1");
+		List<Person> personsList = new ArrayList<>();
+		Person person1 = new Person("childname1", "lname1", "01/01/1980", address1, "phone1", "email1",
+				new MedicalRecords());
+		personsList.add(person1);
+		Household household1 = new Household(address1, personsList);
+		List<Household> householdsList = new ArrayList<>();
+		householdsList.add(household1);
+
+		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
+
+		// WHEN
+		Object[] result = addressesService.getPersonsLivingInChildHousehold("street1");
+
+		// THEN
+		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
+		assertEquals(new Object[] { null }, result);
+	}
+
+	@Test
 	public void givenTwoHouseholdsWithDifferentStreets_whenGetInhabitantsAndStationOfAddress_thenReturnTheCorrespondingInhabitant() {
 		// GIVEN
-		birthdate = LocalDateTime.now();
 		Address address1 = new Address("street1", 123, "city1");
 		List<Person> personsList1 = new ArrayList<>();
-		Person person1 = new Person("fname1", "lname1", birthdate, address1, "phone1", "email1", new MedicalRecords());
+		Person person1 = new Person("fname1", "lname1", "01/01/1990", address1, "phone1", "email1",
+				new MedicalRecords());
 		personsList1.add(person1);
 		Household household1 = new Household(address1, personsList1);
 		Address address2 = new Address("street2", 123, "city2");
 		List<Person> personsList2 = new ArrayList<>();
-		Person person2 = new Person("fname2", "lname2", birthdate, address2, "phone2", "email2", new MedicalRecords());
+		Person person2 = new Person("fname2", "lname2", "01/01/1990", address2, "phone2", "email2",
+				new MedicalRecords());
 		personsList1.add(person2);
 		Household household2 = new Household(address2, personsList2);
 		List<Household> householdsList = new ArrayList<>();
@@ -77,10 +132,10 @@ public class AddressesServiceTest {
 	@Test
 	public void givenTwoFirestations_whenGetInhabitantsAndStationOfAddress_thenReturnTheCorrespondingStationNumber() {
 		// GIVEN
-		birthdate = LocalDateTime.now();
 		Address address1 = new Address("street1", 123, "city1");
 		List<Person> personsList1 = new ArrayList<>();
-		Person person1 = new Person("fname1", "lname1", birthdate, address1, "phone1", "email1", new MedicalRecords());
+		Person person1 = new Person("fname1", "lname1", "01/01/1990", address1, "phone1", "email1",
+				new MedicalRecords());
 		personsList1.add(person1);
 		Household household1 = new Household(address1, personsList1);
 		List<Household> householdsList = new ArrayList<>();
