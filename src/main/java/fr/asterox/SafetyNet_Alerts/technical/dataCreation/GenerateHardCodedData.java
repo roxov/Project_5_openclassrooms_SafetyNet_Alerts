@@ -23,11 +23,14 @@ public class GenerateHardCodedData {
 		allergies.add("allergies1");
 		allergies.add("allergies2");
 		MedicalRecords medicalRecords = new MedicalRecords(medications, allergies);
-		Person person1 = new Person("fname2", "lname2", "03/06/2010", address1, "phone2", "email2", medicalRecords);
+		Person person1 = new Person("adult1", "lname1", "03/06/1980", address1, "phone2", "email2", medicalRecords);
+		Person person2 = new Person("child1", "lname1", "03/06/2010", address1, "phone2", "email2", medicalRecords);
 		List<Person> personsList = new ArrayList<>();
 		personsList.add(person1);
+		personsList.add(person2);
 		List<Person> personsList2 = new ArrayList<>();
 		personsList2.add(person1);
+		personsList.add(person2);
 		Firestation firestion = new Firestation(1, adressesList);
 		Household household = new Household(address1, personsList);
 

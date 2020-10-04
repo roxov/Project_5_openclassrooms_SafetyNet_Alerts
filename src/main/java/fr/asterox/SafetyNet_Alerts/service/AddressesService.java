@@ -2,9 +2,7 @@ package fr.asterox.SafetyNet_Alerts.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +14,9 @@ import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.technical.ManipulateDate;
+import fr.asterox.SafetyNet_Alerts.web.DTO.ChildDTO;
+import fr.asterox.SafetyNet_Alerts.web.DTO.FireAndFloodPersonDTO;
+import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndStationNumberOfAddressDTO;
 
 @Service
 public class AddressesService implements IAddressesService {
@@ -26,10 +27,10 @@ public class AddressesService implements IAddressesService {
 	public FirestationDAO firestationDAO;
 
 	@Override
-	public Object[] getPersonsLivingInChildHousehold(String street) {
+	public List<ChildDTO> getPersonsLivingInChildHousehold(String street) {
 		List<Person> personsInHousehold = new ArrayList<>();
-		Map<Person, Integer> childrenInHousehold = new HashMap<Person, Integer>();
-		List<Person> adultsInHousehold = new ArrayList<>();
+		List<ChildDTO> childrenInHousehold = new ArrayList<>();
+		List<ChildDTO> adultsInHousehold = new ArrayList<>();
 
 		List<Household> householdsList = householdDAO.getHouseholdsList();
 
@@ -40,25 +41,32 @@ public class AddressesService implements IAddressesService {
 					LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
 					if (birthdate.plusYears(18).isAfter(LocalDate.now())) {
 						Integer age = LocalDate.now().getYear() - birthdate.getYear();
-						childrenInHousehold.put(person, age);
+						ChildDTO childDTO = new ChildDTO(person.getFirstName(), person.getLastName(), age);
+						childrenInHousehold.add(childDTO);
 					} else {
-						adultsInHousehold.add(person);
+						Integer age = LocalDate.now().getYear() - birthdate.getYear();
+						ChildDTO adult = new ChildDTO(person.getFirstName(), person.getLastName(), age);
+						adultsInHousehold.add(adult);
 					}
 				}
 				break;
 			}
 		}
 		if (childrenInHousehold.isEmpty()) {
-			return new Object[] { null };
+			return null;
 		}
-		return new Object[] { childrenInHousehold, adultsInHousehold };
+		for (ChildDTO adult : adultsInHousehold) {
+			childrenInHousehold.add(adult);
+		}
+		return childrenInHousehold;
 	}
 
 	@Override
-	public Object[] getInhabitantsAndStationOfTheAddress(String street) {
-		Map<Person, String> InhabitantsInfoMap = new HashMap<Person, String>();
+	public PeopleAndStationNumberOfAddressDTO getInhabitantsAndStationOfTheAddress(String street) {
+
 		List<Person> inhabitantsList = new ArrayList<>();
 		Integer stationNumber = null;
+		List<FireAndFloodPersonDTO> inhabitantsDTOList = new ArrayList<>();
 
 		List<Household> householdsList = householdDAO.getHouseholdsList();
 		for (Household household : householdsList) {
@@ -67,13 +75,13 @@ public class AddressesService implements IAddressesService {
 				for (Person person : inhabitantsList) {
 					LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
 					Integer age = LocalDate.now().getYear() - birthdate.getYear();
-					String ageSt = age + " years old";
-					InhabitantsInfoMap.put(person, ageSt);
-					// TODO : affiche person@2c3d... La Map ne peut pas être transformée par Jackson
-					// (tableau ou liste)
+					FireAndFloodPersonDTO FirePersonDTO = new FireAndFloodPersonDTO(person.getLastName(),
+							person.getPhone(), age, person.getMedicalRecords());
+					inhabitantsDTOList.add(FirePersonDTO);
 				}
-				break;
+
 			}
+			break;
 		}
 
 		List<Firestation> firestationsList = firestationDAO.getFirestationsList();
@@ -86,6 +94,6 @@ public class AddressesService implements IAddressesService {
 				}
 			}
 		}
-		return new Object[] { InhabitantsInfoMap, stationNumber };
+		return new PeopleAndStationNumberOfAddressDTO(inhabitantsDTOList, stationNumber);
 	}
 }

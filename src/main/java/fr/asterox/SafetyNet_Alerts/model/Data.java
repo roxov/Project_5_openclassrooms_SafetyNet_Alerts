@@ -9,6 +9,10 @@ public class Data {
 	public List<Firestation> firestationsList = new ArrayList<>();
 	public List<Person> personsList = new ArrayList<>();
 
+	public Data() {
+		super();
+	}
+
 	// Test constructor
 	public Data(List<Household> householdsList, List<Firestation> firestationsList, List<Person> personsList) {
 		super();

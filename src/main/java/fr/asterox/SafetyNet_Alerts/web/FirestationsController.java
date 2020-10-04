@@ -3,7 +3,6 @@ package fr.asterox.SafetyNet_Alerts.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,14 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
-import fr.asterox.SafetyNet_Alerts.model.Household;
-import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.service.FirestationsService;
+import fr.asterox.SafetyNet_Alerts.web.DTO.HouseholdDTO;
+import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndCountForStationDTO;
 
 /**
  * 
@@ -34,37 +29,18 @@ public class FirestationsController {
 	private FirestationsService firestationsService;
 
 	@GetMapping(value = "/firestation")
-	public MappingJacksonValue getInfoForPersonsServedByStation(@RequestParam int stationNumber) {
-		Object[] personsList = firestationsService.getInfoOnPersonsServedByStation(stationNumber);
-		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("birthdate",
-				"medicalRecords");
-		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
-		MappingJacksonValue personsFilter = new MappingJacksonValue(personsList);
-		personsFilter.setFilters(filterList);
-		return personsFilter;
+	public PeopleAndCountForStationDTO getInfoForPersonsServedByStation(@RequestParam int stationNumber) {
+		return firestationsService.getInfoOnPersonsServedByStation(stationNumber);
 	}
 
 	@GetMapping(value = "/phoneAlert")
-	public MappingJacksonValue getPhonesListAssignedToFirestation(@RequestParam int firestation) {
-		List<Person> personsList = firestationsService.getPersonsServedByStation(firestation);
-		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "birthdate",
-				"address", "email", "medicalRecords");
-		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
-		MappingJacksonValue personsFilter = new MappingJacksonValue(personsList);
-		personsFilter.setFilters(filterList);
-		return personsFilter;
+	public List<String> getPhonesListAssignedToFirestation(@RequestParam int firestation) {
+		return firestationsService.getPhoneOfPersonsServedByStation(firestation);
 	}
 
 	@GetMapping(value = "/flood/stations")
-	public MappingJacksonValue getHouseholdsServedByStations(@RequestParam List<Integer> stations) {
-		// TODO : add age
-		List<Household> householdsList = firestationsService.getHouseholdsServedByStations(stations);
-		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "address",
-				"email");
-		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
-		MappingJacksonValue personsFilter = new MappingJacksonValue(householdsList);
-		personsFilter.setFilters(filterList);
-		return personsFilter;
+	public List<HouseholdDTO> getHouseholdsServedByStations(@RequestParam List<Integer> stations) {
+		return firestationsService.getHouseholdsServedByStations(stations);
 	}
 
 	@PostMapping(value = "/firestation")

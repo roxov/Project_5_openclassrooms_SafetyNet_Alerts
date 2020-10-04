@@ -6,10 +6,9 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -25,6 +24,9 @@ import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 import fr.asterox.SafetyNet_Alerts.model.Person;
+import fr.asterox.SafetyNet_Alerts.web.DTO.ChildDTO;
+import fr.asterox.SafetyNet_Alerts.web.DTO.FireAndFloodPersonDTO;
+import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndStationNumberOfAddressDTO;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -33,23 +35,30 @@ public class AddressesServiceTest {
 	@Autowired
 	private AddressesService addressesService;
 
+	MedicalRecords medicalRecords;
+
 	@MockBean
 	private HouseholdDAO householdDAO;
 
 	@MockBean
 	private FirestationDAO firestationDAO;
 
+	@BeforeEach
+	private void setUpPerTest() {
+		List<String> medicationsAndAllergies = new ArrayList<>();
+		medicationsAndAllergies.add("medicationsAndAllergies");
+		medicalRecords = new MedicalRecords(medicationsAndAllergies, medicationsAndAllergies);
+	}
+
 	@Test
 	public void givenAChildAndAnAdultInHousehold_whenGetPersonsLivingInChildHousehold_thenReturnChildAndAdultInfo() {
 		// GIVEN
 		Address address1 = new Address("street1", 123, "city1");
 		List<Person> personsList = new ArrayList<>();
-		Person person1 = new Person("childname1", "lname1", "01/01/2012", address1, "phone1", "email1",
-				new MedicalRecords());
-		Person person2 = new Person("adultname2", "lname2", "01/01/1980", address1, "phone2", "email2",
-				new MedicalRecords());
-		personsList.add(person1);
-		personsList.add(person2);
+		Person child1 = new Person("childname1", "lname1", "01/01/2012", address1, "phone1", "email1", medicalRecords);
+		Person adult1 = new Person("adultname1", "lname1", "01/01/1980", address1, "phone2", "email2", medicalRecords);
+		personsList.add(child1);
+		personsList.add(adult1);
 		Household household1 = new Household(address1, personsList);
 		List<Household> householdsList = new ArrayList<>();
 		householdsList.add(household1);
@@ -57,17 +66,17 @@ public class AddressesServiceTest {
 		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
 
 		// WHEN
-		Object[] result = addressesService.getPersonsLivingInChildHousehold("street1");
+		List<ChildDTO> result = addressesService.getPersonsLivingInChildHousehold("street1");
 
 		// THEN
 		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-		List<Person> adultsList = new ArrayList<>();
-		adultsList.add(person2);
-		Map<Person, Integer> childrenMap = new HashMap<>();
-		Integer childrenAge = LocalDate.now().getYear() - 2012;
-		childrenMap.put(person1, childrenAge);
-		Object[] objectResult = new Object[] { childrenMap, adultsList };
-		assertEquals(objectResult, result);
+
+		int child1Age = LocalDate.now().getYear() - 2012;
+		int adult1Age = LocalDate.now().getYear() - 1980;
+		List<ChildDTO> childListResult = new ArrayList<>();
+		childListResult.add(new ChildDTO("childname1", "lname1", child1Age));
+		childListResult.add(new ChildDTO("adultname1", "lname1", adult1Age));
+		assertEquals(childListResult, result);
 	}
 
 	@Test
@@ -75,9 +84,8 @@ public class AddressesServiceTest {
 		// GIVEN
 		Address address1 = new Address("street1", 123, "city1");
 		List<Person> personsList = new ArrayList<>();
-		Person person1 = new Person("childname1", "lname1", "01/01/1980", address1, "phone1", "email1",
-				new MedicalRecords());
-		personsList.add(person1);
+		Person adult1 = new Person("adultdname1", "lname1", "01/01/1980", address1, "phone1", "email1", medicalRecords);
+		personsList.add(adult1);
 		Household household1 = new Household(address1, personsList);
 		List<Household> householdsList = new ArrayList<>();
 		householdsList.add(household1);
@@ -85,26 +93,25 @@ public class AddressesServiceTest {
 		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
 
 		// WHEN
-		Object[] result = addressesService.getPersonsLivingInChildHousehold("street1");
+		List<ChildDTO> result = addressesService.getPersonsLivingInChildHousehold("street1");
 
 		// THEN
 		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-		assertEquals(new Object[] { null }, result);
+		assertEquals(null, result);
 	}
 
 	@Test
 	public void givenTwoHouseholdsWithDifferentStreets_whenGetInhabitantsAndStationOfAddress_thenReturnTheCorrespondingInhabitant() {
 		// GIVEN
+
 		Address address1 = new Address("street1", 123, "city1");
 		List<Person> personsList1 = new ArrayList<>();
-		Person person1 = new Person("fname1", "lname1", "01/01/1990", address1, "phone1", "email1",
-				new MedicalRecords());
+		Person person1 = new Person("fname1", "lname1", "01/01/1980", address1, "phone1", "email1", medicalRecords);
 		personsList1.add(person1);
 		Household household1 = new Household(address1, personsList1);
 		Address address2 = new Address("street2", 123, "city2");
 		List<Person> personsList2 = new ArrayList<>();
-		Person person2 = new Person("fname2", "lname2", "01/01/1990", address2, "phone2", "email2",
-				new MedicalRecords());
+		Person person2 = new Person("fname2", "lname2", "01/01/1990", address2, "phone2", "email2", medicalRecords);
 		personsList1.add(person2);
 		Household household2 = new Household(address2, personsList2);
 		List<Household> householdsList = new ArrayList<>();
@@ -121,16 +128,16 @@ public class AddressesServiceTest {
 		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
 
 		// WHEN
-		Object[] result = addressesService.getInhabitantsAndStationOfTheAddress("street1");
+		PeopleAndStationNumberOfAddressDTO result = addressesService.getInhabitantsAndStationOfTheAddress("street1");
 
 		// THEN
 		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
 		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
-		List<Person> inhabitantsList = new ArrayList<>();
-		inhabitantsList.add(person1);
-		Integer stationNumber = 1;
-		Object[] objectResult = new Object[] { inhabitantsList, stationNumber };
-		assertEquals(objectResult, result);
+		List<FireAndFloodPersonDTO> inhabitantsList = new ArrayList<>();
+		Integer adult1Age = LocalDate.now().getYear() - 1980;
+		inhabitantsList.add(new FireAndFloodPersonDTO("lname1", "phone1", adult1Age, medicalRecords));
+		PeopleAndStationNumberOfAddressDTO testResult = new PeopleAndStationNumberOfAddressDTO(inhabitantsList, 1);
+		assertEquals(testResult, result);
 	}
 
 	@Test
@@ -138,8 +145,7 @@ public class AddressesServiceTest {
 		// GIVEN
 		Address address1 = new Address("street1", 123, "city1");
 		List<Person> personsList1 = new ArrayList<>();
-		Person person1 = new Person("fname1", "lname1", "01/01/1990", address1, "phone1", "email1",
-				new MedicalRecords());
+		Person person1 = new Person("fname1", "lname1", "01/01/1980", address1, "phone1", "email1", medicalRecords);
 		personsList1.add(person1);
 		Household household1 = new Household(address1, personsList1);
 		List<Household> householdsList = new ArrayList<>();
@@ -160,15 +166,16 @@ public class AddressesServiceTest {
 		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
 
 		// WHEN
-		Object[] result = addressesService.getInhabitantsAndStationOfTheAddress("street1");
+		PeopleAndStationNumberOfAddressDTO result = addressesService.getInhabitantsAndStationOfTheAddress("street1");
 
 		// THEN
 		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
 		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
-		List<Person> inhabitantsList = new ArrayList<>();
-		inhabitantsList.add(person1);
-		Integer stationNumber = 1;
-		Object[] objectResult = new Object[] { inhabitantsList, stationNumber };
-		assertEquals(objectResult, result);
+		List<FireAndFloodPersonDTO> inhabitantsList = new ArrayList<>();
+		Integer adult1Age = LocalDate.now().getYear() - 1980;
+		inhabitantsList.add(new FireAndFloodPersonDTO("lname1", "phone1", adult1Age, medicalRecords));
+
+		PeopleAndStationNumberOfAddressDTO testResult = new PeopleAndStationNumberOfAddressDTO(inhabitantsList, 1);
+		assertEquals(testResult, result);
 	}
 }

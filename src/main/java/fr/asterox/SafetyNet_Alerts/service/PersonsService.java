@@ -2,9 +2,7 @@ package fr.asterox.SafetyNet_Alerts.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Service;
 import fr.asterox.SafetyNet_Alerts.consumer.PersonDAO;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.technical.ManipulateDate;
+import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
 
 @Service
 public class PersonsService implements IPersonsService {
@@ -20,31 +19,31 @@ public class PersonsService implements IPersonsService {
 	private PersonDAO personDAO;
 
 	@Override
-	public Map<Person, String> getInhabitantsInfo(String firstName, String lastName) {
+	public List<PersonInfoDTO> getInhabitantsInfo(String firstName, String lastName) {
 		List<Person> allPersonsList = personDAO.getPersonsList();
-		Map<Person, String> personsSelectedByLastNameList = new HashMap<>();
+		List<PersonInfoDTO> personsSelectedByLastNameList = new ArrayList<>();
 		for (Person person : allPersonsList) {
-			if (person.getLastName().equals(lastName)) {
+			if (person.getLastName().equals(lastName) && person.getFirstName().equals(firstName)) {
 				LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
-				Integer age = LocalDate.now().getYear() - birthdate.getYear();
-				String ageSt = age + " years old";
-				personsSelectedByLastNameList.put(person, ageSt);
+				int age = LocalDate.now().getYear() - birthdate.getYear();
+				PersonInfoDTO personInfoDTO = new PersonInfoDTO(person.getLastName(), person.getAddress(), age,
+						person.getEmail(), person.getMedicalRecords());
+				personsSelectedByLastNameList.add(personInfoDTO);
 			}
 		}
 		return personsSelectedByLastNameList;
-		// TODO : renvoie une person 2c3d...
 	}
 
 	@Override
-	public List<Person> getPersonsListOfCity(String city) {
+	public List<String> getEmailsListOfCity(String city) {
 		List<Person> allPersonsList = personDAO.getPersonsList();
-		List<Person> personsListOfTheCity = new ArrayList<>();
+		List<String> emailsListOfTheCity = new ArrayList<>();
 		for (Person person : allPersonsList) {
 			if (person.getAddress().getCity().equals(city)) {
-				personsListOfTheCity.add(person);
+				emailsListOfTheCity.add(person.getEmail());
 			}
 		}
-		return personsListOfTheCity;
+		return emailsListOfTheCity;
 	}
 
 	@Override

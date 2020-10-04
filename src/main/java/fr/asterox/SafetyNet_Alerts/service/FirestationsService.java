@@ -2,9 +2,7 @@ package fr.asterox.SafetyNet_Alerts.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +14,10 @@ import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.technical.ManipulateDate;
+import fr.asterox.SafetyNet_Alerts.web.DTO.FireAndFloodPersonDTO;
+import fr.asterox.SafetyNet_Alerts.web.DTO.HouseholdDTO;
+import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndCountForStationDTO;
+import fr.asterox.SafetyNet_Alerts.web.DTO.PersonOfStationDTO;
 
 @Service
 public class FirestationsService implements IFirestationsService {
@@ -26,13 +28,10 @@ public class FirestationsService implements IFirestationsService {
 	public HouseholdDAO householdDAO;
 
 	@Override
-	public Object[] getInfoOnPersonsServedByStation(int stationNumber) {
-		List<Person> personsServedByStationList = new ArrayList<>();
+	public List<Person> getPersonsServedByStation(int stationNumber) {
 		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
 		List<Household> allHouseholdsList = householdDAO.getHouseholdsList();
-		Map<String, Integer> childrenAndAdultCount = new HashMap<>();
-		childrenAndAdultCount.put("Number of adults", 0);
-		childrenAndAdultCount.put("Number of children", 0);
+		List<Person> personsServedByStationList = new ArrayList<>();
 
 		for (Firestation firestation : allFirestationsList) {
 			if (firestation.getStationNumber() == stationNumber) {
@@ -41,15 +40,8 @@ public class FirestationsService implements IFirestationsService {
 					for (Household household : allHouseholdsList) {
 						if (household.getAddress().equals(address)) {
 							List<Person> personsInHousehold = household.getPersonsList();
-							personsServedByStationList.addAll(personsInHousehold);
 							for (Person person : personsInHousehold) {
-								LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
-								if (birthdate.plusYears(18).isAfter(LocalDate.now())) {
-									childrenAndAdultCount.put("Number of children",
-											childrenAndAdultCount.get("Number of children") + 1);
-								}
-								childrenAndAdultCount.put("Number of adults",
-										childrenAndAdultCount.get("Number of adults") + 1);
+								personsServedByStationList.add(person);
 							}
 							break;
 						}
@@ -57,41 +49,52 @@ public class FirestationsService implements IFirestationsService {
 				}
 			}
 		}
-
-		return new Object[] { personsServedByStationList, childrenAndAdultCount };
-	}
-
-	@Override
-	public List<Person> getPersonsServedByStation(int stationNumber) {
-		List<Person> personsServedByStationList = new ArrayList<>();
-		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
-		List<Household> allHouseholdsList = householdDAO.getHouseholdsList();
-
-		for (Firestation firestation : allFirestationsList) {
-			if (firestation.getStationNumber() == stationNumber) {
-				List<Address> addressesServedByStation = firestation.getAdressesList();
-				for (Address address : addressesServedByStation) {
-					for (Household household : allHouseholdsList) {
-						if (household.getAddress().equals(address)) {
-							personsServedByStationList.addAll(household.getPersonsList());
-						}
-					}
-				}
-				break;
-			}
-		}
 		return personsServedByStationList;
 	}
 
 	@Override
-	public List<Household> getHouseholdsServedByStations(List<Integer> stationNumbersList) {
-		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
+	public PeopleAndCountForStationDTO getInfoOnPersonsServedByStation(int stationNumber) {
+		List<Person> personsServedByStationList = this.getPersonsServedByStation(stationNumber);
+		List<PersonOfStationDTO> personOfStationDTOList = new ArrayList<>();
+		int numberOfAdults = 0;
+		int numberOfChildren = 0;
+
+		for (Person person : personsServedByStationList) {
+			PersonOfStationDTO personOfStationDTO = new PersonOfStationDTO(person.getFirstName(), person.getLastName(),
+					person.getAddress(), person.getPhone());
+			personOfStationDTOList.add(personOfStationDTO);
+
+			LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
+			if (birthdate.plusYears(18).isAfter(LocalDate.now())) {
+				numberOfChildren = numberOfChildren + 1;
+			}
+			numberOfAdults = numberOfAdults + 1;
+		}
+		return new PeopleAndCountForStationDTO(personOfStationDTOList, numberOfAdults, numberOfChildren);
+	}
+
+	@Override
+	public List<String> getPhoneOfPersonsServedByStation(int stationNumber) {
+		List<Person> personsServedByStationList = this.getPersonsServedByStation(stationNumber);
+		List<String> phonesList = new ArrayList<>();
+		for (Person person : personsServedByStationList) {
+			String phone = person.getPhone();
+			phonesList.add(phone);
+		}
+		return phonesList;
+	}
+
+	@Override
+	public List<HouseholdDTO> getHouseholdsServedByStations(List<Integer> stationNumbersList) {
+
 		List<Household> allHouseholdsList = householdDAO.getHouseholdsList();
+		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
 		List<Household> householdsServedByStationsList = new ArrayList<>();
-		for (Integer i : stationNumbersList) {
+		List<HouseholdDTO> householdsDTOList = new ArrayList<>();
+
+		for (int i : stationNumbersList) {
 			for (Firestation firestation : allFirestationsList) {
-				Integer stationNumber = firestation.getStationNumber();
-				if (stationNumber.equals(i)) {
+				if (firestation.getStationNumber() == i) {
 					List<Address> addressesServedByStation = firestation.getAdressesList();
 					for (Address address : addressesServedByStation)
 						for (Household household : allHouseholdsList) {
@@ -100,9 +103,26 @@ public class FirestationsService implements IFirestationsService {
 							}
 						}
 				}
+				break;
 			}
 		}
-		return householdsServedByStationsList;
+
+		for (Household household : householdsServedByStationsList) {
+
+			List<Person> personsOfHousehold = household.getPersonsList();
+			List<FireAndFloodPersonDTO> personsDTOOfHousehold = new ArrayList<>();
+			for (Person person : personsOfHousehold) {
+				LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
+				int age = LocalDate.now().getYear() - birthdate.getYear();
+				personsDTOOfHousehold.add(new FireAndFloodPersonDTO(person.getLastName(), person.getPhone(), age,
+						person.getMedicalRecords()));
+
+			}
+			HouseholdDTO householdDTO = new HouseholdDTO(personsDTOOfHousehold);
+			householdsDTOList.add(householdDTO);
+		}
+
+		return householdsDTOList;
 	}
 
 	@Override

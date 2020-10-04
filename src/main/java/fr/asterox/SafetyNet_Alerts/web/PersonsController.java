@@ -1,10 +1,8 @@
 package fr.asterox.SafetyNet_Alerts.web;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,12 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.service.PersonsService;
+import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
 
 /**
  * 
@@ -33,27 +28,13 @@ public class PersonsController {
 	private PersonsService personsService;
 
 	@GetMapping(value = "/personInfo")
-	public MappingJacksonValue getInhabitantsInfo(@RequestParam String firstName, String lastName) {
-
-		// TODO : tester les filtres ?
-		Map<Person, String> personsList = personsService.getInhabitantsInfo(firstName, lastName);
-		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "birthdate",
-				"phone");
-		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
-		MappingJacksonValue personsFilter = new MappingJacksonValue(personsList);
-		personsFilter.setFilters(filterList);
-		return personsFilter;
+	public List<PersonInfoDTO> getInhabitantsInfo(@RequestParam String firstName, String lastName) {
+		return personsService.getInhabitantsInfo(firstName, lastName);
 	}
 
 	@GetMapping(value = "/communityEmail")
-	public MappingJacksonValue getEmailList(@RequestParam String city) {
-		List<Person> personsList = personsService.getPersonsListOfCity(city);
-		SimpleBeanPropertyFilter filterRules = SimpleBeanPropertyFilter.serializeAllExcept("firstName", "lastName",
-				"birthdate", "address", "phone", "medicalRecords");
-		FilterProvider filterList = new SimpleFilterProvider().addFilter("personsInfoFilter", filterRules);
-		MappingJacksonValue personsFilter = new MappingJacksonValue(personsList);
-		personsFilter.setFilters(filterList);
-		return personsFilter;
+	public List<String> getEmailList(@RequestParam String city) {
+		return personsService.getEmailsListOfCity(city);
 	}
 
 	@PostMapping(value = "/person")

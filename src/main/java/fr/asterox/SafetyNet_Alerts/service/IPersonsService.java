@@ -1,9 +1,9 @@
 package fr.asterox.SafetyNet_Alerts.service;
 
 import java.util.List;
-import java.util.Map;
 
 import fr.asterox.SafetyNet_Alerts.model.Person;
+import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
 
 /**
  * 
@@ -17,19 +17,20 @@ public interface IPersonsService {
 	 * 
 	 * @param firstName
 	 * @param lastName
-	 * @return personsSelectedByLastNameList, a Map of Person/age
+	 * @return personsSelectedByLastNameList, the information on the concerned
+	 *         person
 	 * 
 	 */
-	public Map<Person, String> getInhabitantsInfo(String firstName, String lastName);
+	public List<PersonInfoDTO> getInhabitantsInfo(String firstName, String lastName);
 
 	/**
 	 * endpoint : communityEmail?city=<city>
 	 * 
 	 * @param city
-	 * @return personsListOfTheCity
+	 * @return emailsListOfTheCity
 	 * 
 	 */
-	public List<Person> getPersonsListOfCity(String city);
+	public List<String> getEmailsListOfCity(String city);
 
 	public void addPerson(Person person);
 
