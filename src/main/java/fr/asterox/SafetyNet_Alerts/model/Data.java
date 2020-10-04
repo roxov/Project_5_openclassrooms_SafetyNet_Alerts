@@ -9,6 +9,14 @@ public class Data {
 	public List<Firestation> firestationsList = new ArrayList<>();
 	public List<Person> personsList = new ArrayList<>();
 
+	// Test constructor
+	public Data(List<Household> householdsList, List<Firestation> firestationsList, List<Person> personsList) {
+		super();
+		this.householdsList = householdsList;
+		this.firestationsList = firestationsList;
+		this.personsList = personsList;
+	}
+
 	public List<Household> getHouseholdsList() {
 		return householdsList;
 	}

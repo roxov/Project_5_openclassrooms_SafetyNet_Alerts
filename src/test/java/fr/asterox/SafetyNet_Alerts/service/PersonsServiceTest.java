@@ -10,10 +10,11 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import fr.asterox.SafetyNet_Alerts.consumer.PersonDAO;
 import fr.asterox.SafetyNet_Alerts.model.Address;
@@ -24,13 +25,15 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
 @ExtendWith(MockitoExtension.class)
 public class PersonsServiceTest {
 
+	@Autowired
 	private static PersonsService personsService;
+
+	@MockBean
+	private static PersonDAO personDAO;
+
 	private static List<Person> personsList;
 	private static Address address;
 	private static MedicalRecords medicalRecords;
-
-	@Mock
-	private static PersonDAO personDAO;
 
 	@BeforeEach
 	private void setUpPerTest() {

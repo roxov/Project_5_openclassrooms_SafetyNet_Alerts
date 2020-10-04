@@ -11,10 +11,11 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import fr.asterox.SafetyNet_Alerts.consumer.FirestationDAO;
 import fr.asterox.SafetyNet_Alerts.consumer.HouseholdDAO;
@@ -28,11 +29,13 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
 @ExtendWith(MockitoExtension.class)
 public class FirestationsServiceTest {
 
+	@Autowired
 	private static FirestationsService firestationsService;
 
-	@Mock
+	@MockBean
 	private static FirestationDAO firestationDAO;
-	@Mock
+
+	@MockBean
 	private static HouseholdDAO householdDAO;
 
 	@Test

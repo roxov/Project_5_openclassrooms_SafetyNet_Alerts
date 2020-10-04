@@ -1,119 +1,84 @@
 package fr.asterox.SafetyNet_Alerts.technical.dataCreation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
+import fr.asterox.SafetyNet_Alerts.model.Firestation;
+import fr.asterox.SafetyNet_Alerts.model.Household;
+import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
+import fr.asterox.SafetyNet_Alerts.model.Person;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class GenerateDataTest {
 
-//	private static GenerateData data;
-//	List<PersonModel> personsModelList;
-//	List<FirestationModel> firestationsModelList;
-//	List<MedicalRecordsModel> medicalRecordsModelList;
-//
-//	@Mock
-//	private static JsonReader jsonReader;
-//	@Mock
-//	private static RootModel rootModel;
-//
-//	@BeforeEach
-//	private void setUpPerTest() throws IOException {
-//		personsModelList = new ArrayList<>();
-//		PersonModel personModel1 = new PersonModel("fname1", "lname1", "streetmodel1", "city1", 123, "phone1",
-//				"email1");
-//		personsModelList.add(personModel1);
-//
-//		firestationsModelList = new ArrayList<>();
-//		FirestationModel firestationModel = new FirestationModel("streetmodel1", 1);
-//		firestationsModelList.add(firestationModel);
-//
-//		medicalRecordsModelList = new ArrayList<>();
-//		MedicalRecordsModel medicalRecordsModel1 = new MedicalRecordsModel("fname1", "lname1", "birthdate1",
-//				"medications1", "allergies1");
-//		medicalRecordsModelList.add(medicalRecordsModel1);
-//	}
-//
-//	@Test
-//	public void givenTwoPersonsModelWithDifferentAddresses_whenCreateAddressesList_thenReturnAListOfTwoAddresses()
-//			throws IOException {
-//		// GIVEN
-//		PersonModel personModel2 = new PersonModel("fname2", "lname2", "streetmodel2", "city2", 456, "phone2",
-//				"email2");
-//		personsModelList.add(personModel2);
-//		rootModel = new RootModel(personsModelList, firestationsModelList, medicalRecordsModelList);
-//
-//		when(jsonReader.createObjectFromData()).thenReturn(rootModel);
-//
-//		List<Address> addressesList = new ArrayList<>();
-//		addressesList.add(new Address("streetmodel1", 123, "city1"));
-//		addressesList.add(new Address("streetmodel2", 456, "city2"));
-//
-//		// WHEN
-//		List<Address> result = data.createAddressesList();
-//
-//		// THEN
-//		// verify
-//		assertEquals(addressesList, result);
-//	}
-//
-//	@Test
-//	public void givenTwoPersonsModelWithSameAddress_whenCreateAddressesList_thenReturnAListOfOneAddress()
-//			throws IOException {
-//		// ARRANGE
-//		PersonModel personModel3 = new PersonModel("fname3", "lname3", "streetmodel1", "city1", 123, "phone3",
-//				"email3");
-//		personsModelList.add(personModel3);
-//		List<Address> addressesList = new ArrayList<>();
-//		addressesList.add(new Address("streetmodel1", 123, "city1"));
-//		when(rootModel.getPersons()).thenReturn(personsModelList);
-//
-//		// ASSERT
-//		List<Address> result = data.createAddressesList();
-//
-//		// ACT
-//		assertEquals(addressesList, result);
-//	}
-//
-//	@Test
-//	public void givenTwoMedicalRecords_whenCreateMedicalRecordsList_thenReturnAListOfMedicalRecords()
-//			throws IOException {
-//		// ARRANGE
-//		MedicalRecordsModel medicalRecordsModel2 = new MedicalRecordsModel("fname2", "lname2", "birthdate2",
-//				"medications2", "allergies2");
-//		medicalRecordsModelList.add(medicalRecordsModel2);
-//		rootModel = new RootModel(personsModelList, firestationsModelList, medicalRecordsModelList);
-//
-//		when(jsonReader.createObjectFromData()).thenReturn(any(RootModel.class));
-//		when(rootModel.getMedicalrecords()).thenReturn(medicalRecordsModelList);
-//
-//		List<MedicalRecords> medicalsRecordsList = new ArrayList<>();
-//		medicalsRecordsList.add(new MedicalRecords("medications1", "allergies1"));
-//		medicalsRecordsList.add(new MedicalRecords("medications2", "allergies2"));
-//
-//		// ASSERT
-//		List<MedicalRecords> result = data.createMedicalRecordsList();
-//
-//		// ACT
-//		assertEquals(medicalsRecordsList, result);
-//	}
+	@Autowired
+	private GenerateData generateData;
 
-//	@Test
-//	public void givenTwoAddressesForAFirestation_whenCreateFirestationsList_thenReturnAListOfOneFirestationWithTwoAddresses()
-//			throws IOException {
-//		// ARRANGE
-//		PersonModel personModel3 = new PersonModel("fname3", "lname3", "streetmodel1", "city1", 123, "phone3",
-//				"email3");
-//		personsModelList.add(personModel3);
-//		List<Address> addressesList = new ArrayList<>();
-//		addressesList.add(new Address("streetmodel1", 123, "city1"));
-//		when(rootModel.getPersons()).thenReturn(personsModelList);
-//
-//		// ASSERT
-//		List<Address> result = data.createAddressesList();
-//
-//		// ACT
-//		assertEquals(addressesList, result);
-//	}
+	@MockBean
+	private GenerateData parseData;
+
+	@MockBean
+	private Data result;
+
+	@MockBean
+	private Data dataResult;
+
+	@Test
+	public void givenRawData_whenGenerateData_thenReturnDataObjectWithThreeLists() throws IOException {
+		// GIVEN
+		String rawData = "{\"persons\": [{ \"firstName\":\"fname\", \"lastName\":\"lname\", \"address\":\"street\", \"city\":\"city\", \"zip\":\"123\", \"phone\":\"phone\", \"email\":\"email\" }],"
+				+ " \"firestations\":[ { \"address\":\"street\", \"station\":\"1\" }],"
+				+ "  \"medicalrecords\": [{ \"firstName\":\"fname\", \"lastName\":\"lname\", \"birthdate\":\"birthdate\", \"medications\":[\"medications1\", \"medications2\"], \"allergies\":[\"allergies1\", \"allergies2\"] } ]}";
+
+		when(generateData.readDataSourceFile()).thenReturn(rawData);
+
+		// WHEN
+		Data result = generateData.generateData();
+
+		// THEN
+		verify(generateData, Mockito.times(1)).readDataSourceFile();
+		verify(generateData, Mockito.times(1)).parseData();
+		verify(generateData, Mockito.times(1)).parsePersonsData();
+		verify(generateData, Mockito.times(1)).parseFirestationsData();
+		verify(generateData, Mockito.times(1)).parseMedicalRecordsData();
+
+		Address addressResult = new Address("street", 123, "city");
+		List<String> medicationsResult = new ArrayList<>();
+		medicationsResult.add("medications1");
+		medicationsResult.add("medications2");
+		List<String> allergiesResult = new ArrayList<>();
+		allergiesResult.add("allergies1");
+		allergiesResult.add("allergies2");
+		MedicalRecords medicalRecordsResult = new MedicalRecords(medicationsResult, allergiesResult);
+		Person personResult = new Person("fname", "lname", "birthdate", addressResult, "phone", "email",
+				medicalRecordsResult);
+		List<Person> personsListResult = new ArrayList<>();
+		personsListResult.add(personResult);
+		List<Firestation> firestationsListResult = new ArrayList<>();
+		List<Address> addressListResult = new ArrayList<>();
+		addressListResult.add(addressResult);
+		firestationsListResult.add(new Firestation(1, addressListResult));
+		List<Household> householdsListResult = new ArrayList<>();
+		Household household = new Household(addressResult, personsListResult);
+		householdsListResult.add(household);
+		Data dataResult = new Data(householdsListResult, firestationsListResult, personsListResult);
+		assertEquals(dataResult, result);
+	}
+
 }

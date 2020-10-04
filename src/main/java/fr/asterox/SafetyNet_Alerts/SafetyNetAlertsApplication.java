@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import fr.asterox.SafetyNet_Alerts.model.Data;
-import fr.asterox.SafetyNet_Alerts.technical.dataCreation.GenerateHardCodedData;
+import fr.asterox.SafetyNet_Alerts.technical.dataCreation.GenerateData;
 
 @SpringBootApplication
 public class SafetyNetAlertsApplication {
@@ -24,9 +24,8 @@ public class SafetyNetAlertsApplication {
 	}
 
 	@Bean
-	public Data getData() {
-
-		return GenerateHardCodedData.generateData();
+	public Data getData() throws IOException {
+		return new GenerateData().generateData();
 	}
 
 	@Bean

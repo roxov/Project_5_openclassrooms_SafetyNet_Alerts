@@ -11,7 +11,7 @@ import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 
 public class GenerateHardCodedData {
-	public static Data generateData() {
+	public Data generateData() {
 
 		Address address1 = new Address("1509 Culver St", 97451, "Culver");
 		List<Address> adressesList = new ArrayList<>();
