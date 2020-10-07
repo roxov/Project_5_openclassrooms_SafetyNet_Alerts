@@ -28,14 +28,14 @@ import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
 public class PersonsServiceTest {
 
 	@Autowired
-	private static PersonsService personsService;
+	private PersonsService personsService;
 
 	@MockBean
-	private static PersonDAO personDAO;
+	private PersonDAO personDAO;
 
-	private static List<Person> personsList;
-	private static Address address;
-	private static MedicalRecords medicalRecords;
+	private List<Person> personsList;
+	private Address address;
+	private MedicalRecords medicalRecords;
 
 	@BeforeEach
 	private void setUpPerTest() {
@@ -61,11 +61,17 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(personDAO, Mockito.times(1)).getPersonsList();
-		List<PersonInfoDTO> personsListTest = new ArrayList<>();
 		int age = LocalDate.now().getYear() - 1980;
-		personsListTest.add(new PersonInfoDTO("lname1", address, age, "email1", medicalRecords));
-		personsListTest.add(new PersonInfoDTO("lname1", address, age, "email2", medicalRecords));
-		assertEquals(personsListTest, result);
+		assertEquals("lname1", result.get(0).getLastName());
+		assertEquals(address, result.get(0).getAddress());
+		assertEquals(age, result.get(0).getAge());
+		assertEquals("email1", result.get(0).getEmail());
+		assertEquals(medicalRecords, result.get(0).getMedicalRecords());
+		assertEquals("lname1", result.get(1).getLastName());
+		assertEquals(address, result.get(1).getAddress());
+		assertEquals(age, result.get(1).getAge());
+		assertEquals("email2", result.get(1).getEmail());
+		assertEquals(medicalRecords, result.get(1).getMedicalRecords());
 	}
 
 	@Test
@@ -80,14 +86,16 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(personDAO, Mockito.times(1)).getPersonsList();
-		List<PersonInfoDTO> personsListTest = new ArrayList<>();
 		int age = LocalDate.now().getYear() - 1980;
-		personsListTest.add(new PersonInfoDTO("lname2", address, age, "email2", medicalRecords));
-		assertEquals(personsListTest, result);
+		assertEquals("lname2", result.get(0).getLastName());
+		assertEquals(address, result.get(0).getAddress());
+		assertEquals(age, result.get(0).getAge());
+		assertEquals("email2", result.get(0).getEmail());
+		assertEquals(medicalRecords, result.get(0).getMedicalRecords());
 	}
 
 	@Test
-	public void givenListOfTwoPersonsFromDifferentCities_whenGetPersonsListOfCity_thenReturnAListOfOnePerson() {
+	public void givenListOfTwoPersonsFromDifferentCities_whenGetEmailsListOfCity_thenReturnEmailOfOnePerson() {
 		// GIVEN
 		Address address2 = new Address("street", 123, "city2");
 		Person person2 = new Person("fname2", "lname2", "01/01/1980", address2, "phone2", "email2", medicalRecords);

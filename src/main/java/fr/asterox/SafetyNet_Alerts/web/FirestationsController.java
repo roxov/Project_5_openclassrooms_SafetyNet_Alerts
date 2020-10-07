@@ -2,6 +2,8 @@ package fr.asterox.SafetyNet_Alerts.web;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndCountForStationDTO;
 
 @RestController
 public class FirestationsController {
+	private static final Logger LOGGER = LogManager.getLogger(FirestationsController.class);
 
 	@Autowired
 	private FirestationsService firestationsService;
@@ -45,7 +48,12 @@ public class FirestationsController {
 
 	@PostMapping(value = "/firestation")
 	public void addFirestation(@RequestBody Firestation firestation) {
+//		Firestation firestationAdded = 
 		firestationsService.addFirestation(firestation);
+//		if (firestationAdded == null) {
+//			logger.info("Adding new firestation : null Content");
+//			return ResponseEntity.noContent().build();
+//		}
 	}
 
 	@PutMapping(value = "/firestation")

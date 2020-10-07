@@ -1,11 +1,13 @@
 package fr.asterox.SafetyNet_Alerts.technical.dataCreation;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,34 +32,15 @@ public class GenerateData {
 
 	public FileReader filereader;
 	JsonIterator iterator;
-	private static final Logger logger = LogManager.getLogger(GenerateData.class);
+	Map<Integer, List<Address>> firestationsMap = new HashMap<>();
+	private static final Logger LOGGER = LogManager.getLogger(GenerateData.class);
 
 	public static List<Household> householdsList = new ArrayList<>();
 	public static List<Firestation> firestationsList = new ArrayList<>();
 	public static List<Person> personsList = new ArrayList<>();
 
-	public String readDataSourceFile() throws IOException {
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/data.json"));
-			// TODO : trouver une méthode qui lit tout le fichier d'un coup ?
-			StringBuilder stbuilder = new StringBuilder();
-			String line = reader.readLine();
-			while (line != null) {
-				stbuilder.append(line);
-				line = reader.readLine();
-			}
-			String allData = stbuilder.toString();
-			reader.close();
-			return allData;
-		} catch (FileNotFoundException e) {
-			logger.fatal("The data source file was not found", e);
-			throw new RuntimeException("The data source file was not found", e);
-		}
-
-	}
-
 	public void parseData() throws IOException {
-		String allData = this.readDataSourceFile();
+		String allData = FilePath.readDataSourceFile();
 		iterator = JsonIterator.parse(allData);
 		for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
 			switch (field) {
@@ -119,6 +102,8 @@ public class GenerateData {
 					email = iterator.readString();
 				}
 				break;
+			default:
+				iterator.skip();
 			}
 			Address address = new Address(street, zip, city);
 			Person person = new Person(firstName, lastName, null, address, phone, email, null);
@@ -128,7 +113,7 @@ public class GenerateData {
 
 	public void parseFirestationsData() throws IOException {
 		String street = null;
-		int stationNumber = 0;
+		Integer stationNumber = 0;
 		Address address = null;
 		List<Address> addressesListOfTheStation = new ArrayList<>();
 
@@ -144,6 +129,8 @@ public class GenerateData {
 					stationNumber = iterator.readInt();
 				}
 				break;
+			default:
+				iterator.skip();
 			}
 
 			for (Person person : personsList) {
@@ -153,16 +140,10 @@ public class GenerateData {
 				}
 			}
 
-			for (Firestation firestation : firestationsList) {
-				if (stationNumber == firestation.getStationNumber()) {
-					addressesListOfTheStation = firestation.getAdressesList();
-					addressesListOfTheStation.add(address);
-					firestation.setAdressesList(addressesListOfTheStation);
-				}
-				addressesListOfTheStation.add(address);
-				Firestation newFirestation = new Firestation(stationNumber, addressesListOfTheStation);
-				firestationsList.add(newFirestation);
-			}
+			firestationsMap.put(stationNumber, firestationsMap.getOrDefault(stationNumber, new ArrayList<Address>()));
+			List<Address> currentFirestationAddressesList = firestationsMap.get(stationNumber);
+			currentFirestationAddressesList.add(address);
+			firestationsMap.put(stationNumber, currentFirestationAddressesList);
 		}
 	}
 
@@ -209,6 +190,8 @@ public class GenerateData {
 					iterator.skip();
 				}
 				break;
+			default:
+				iterator.skip();
 			}
 		}
 
@@ -226,6 +209,11 @@ public class GenerateData {
 		this.parseData();
 
 		data.setPersonsList(personsList);
+
+		Set<Entry<Integer, List<Address>>> setFirestationsEntry = firestationsMap.entrySet();
+		for (Entry<Integer, List<Address>> fEntry : setFirestationsEntry) {
+			firestationsList.add(new Firestation(fEntry.getKey(), fEntry.getValue()));
+		}
 		data.setFirestationsList(firestationsList);
 
 		for (Person person : personsList) {
@@ -243,6 +231,16 @@ public class GenerateData {
 				householdsList.add(newHousehold);
 			}
 		}
+//		Map<Address, List<Person>> householdsMap = new HashMap<>();
+//		householdsMap.put(person.getAddress(), householdsMap.getOrDefault(person.getAddress(), new ArrayList<Person>()));
+//		List<Person> currentHouseholdPersonsList = householdsMap.get(person.getAddress());
+//		currentHouseholdPersonsList.add(person);
+//		householdsMap.put(person.getAddress()), currentHouseholdPersonsList);
+
+//		Set<Entry<Address, List<Person>>> setHouseholdsEntry = householdsMap.entrySet();
+//		for (Entry<Address, List<Person>>> hEntry : setHouseholdsEntry) {
+//			householdsList.add(new Household(hEntry.getKey(), hEntry.getValue()));
+//		}
 		data.setHouseholdsList(householdsList);
 		return data;
 	}

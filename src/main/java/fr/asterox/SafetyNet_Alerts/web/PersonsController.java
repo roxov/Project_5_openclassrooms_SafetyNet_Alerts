@@ -2,6 +2,8 @@ package fr.asterox.SafetyNet_Alerts.web;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
 
 @RestController
 public class PersonsController {
+	private static final Logger LOGGER = LogManager.getLogger(PersonsController.class);
 
 	@Autowired
 	private PersonsService personsService;

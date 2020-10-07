@@ -1,5 +1,5 @@
 package fr.asterox.SafetyNet_Alerts.integration;
 
-public class DataServiceIT {
+public class PersonsControllerIT {
 
 }

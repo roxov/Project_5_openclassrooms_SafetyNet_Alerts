@@ -1,5 +1,7 @@
 package fr.asterox.SafetyNet_Alerts.web;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,7 @@ import fr.asterox.SafetyNet_Alerts.service.MedicalRecordsService;
 
 @RestController
 public class MedicalRecordsController {
+	private static final Logger LOGGER = LogManager.getLogger(MedicalRecordsController.class);
 
 	@Autowired
 	private MedicalRecordsService medicalRecordsService;

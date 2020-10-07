@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ import fr.asterox.SafetyNet_Alerts.web.DTO.PersonOfStationDTO;
 
 @Service
 public class FirestationsService implements IFirestationsService {
+	private static final Logger LOGGER = LogManager.getLogger(FirestationsService.class);
 
 	@Autowired
 	public FirestationDAO firestationDAO;

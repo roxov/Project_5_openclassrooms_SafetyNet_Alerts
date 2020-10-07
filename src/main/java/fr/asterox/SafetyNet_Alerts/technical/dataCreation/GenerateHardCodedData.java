@@ -28,9 +28,6 @@ public class GenerateHardCodedData {
 		List<Person> personsList = new ArrayList<>();
 		personsList.add(person1);
 		personsList.add(person2);
-		List<Person> personsList2 = new ArrayList<>();
-		personsList2.add(person1);
-		personsList.add(person2);
 		Firestation firestion = new Firestation(1, adressesList);
 		Household household = new Household(address1, personsList);
 
@@ -42,7 +39,7 @@ public class GenerateHardCodedData {
 		Data data = new Data();
 		data.setFirestationsList(firestationsList);
 		data.setHouseholdsList(householdsList);
-		data.setPersonsList(personsList2);
+		data.setPersonsList(personsList);
 		return data;
 	}
 }

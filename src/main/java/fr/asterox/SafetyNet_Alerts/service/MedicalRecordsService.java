@@ -1,5 +1,7 @@
 package fr.asterox.SafetyNet_Alerts.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,7 @@ import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 
 @Service
 public class MedicalRecordsService implements IMedicalRecordsService {
+	private static final Logger LOGGER = LogManager.getLogger(MedicalRecordsService.class);
 
 	@Autowired
 	public MedicalRecordsDAO medicalRecordsDAO;

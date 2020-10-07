@@ -25,7 +25,6 @@ import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.web.DTO.ChildDTO;
-import fr.asterox.SafetyNet_Alerts.web.DTO.FireAndFloodPersonDTO;
 import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndStationNumberOfAddressDTO;
 
 @SpringBootTest
@@ -73,10 +72,13 @@ public class AddressesServiceTest {
 
 		int child1Age = LocalDate.now().getYear() - 2012;
 		int adult1Age = LocalDate.now().getYear() - 1980;
-		List<ChildDTO> childListResult = new ArrayList<>();
-		childListResult.add(new ChildDTO("childname1", "lname1", child1Age));
-		childListResult.add(new ChildDTO("adultname1", "lname1", adult1Age));
-		assertEquals(childListResult, result);
+		assertEquals("childname1", result.get(0).getFirstName());
+		assertEquals("lname1", result.get(0).getLastName());
+		assertEquals(child1Age, result.get(0).getAge());
+		assertEquals("adultname1", result.get(1).getFirstName());
+		assertEquals("lname1", result.get(1).getLastName());
+		assertEquals(adult1Age, result.get(1).getAge());
+
 	}
 
 	@Test
@@ -133,11 +135,12 @@ public class AddressesServiceTest {
 		// THEN
 		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
 		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
-		List<FireAndFloodPersonDTO> inhabitantsList = new ArrayList<>();
 		Integer adult1Age = LocalDate.now().getYear() - 1980;
-		inhabitantsList.add(new FireAndFloodPersonDTO("lname1", "phone1", adult1Age, medicalRecords));
-		PeopleAndStationNumberOfAddressDTO testResult = new PeopleAndStationNumberOfAddressDTO(inhabitantsList, 1);
-		assertEquals(testResult, result);
+		assertEquals("lname1", result.getPeopleOfAddress().get(0).getLastName());
+		assertEquals("phone1", result.getPeopleOfAddress().get(0).getPhone());
+		assertEquals(adult1Age, result.getPeopleOfAddress().get(0).getAge());
+		assertEquals(medicalRecords, result.getPeopleOfAddress().get(0).getMedicalRecords());
+		assertEquals(1, result.getStationNumber());
 	}
 
 	@Test
@@ -171,11 +174,11 @@ public class AddressesServiceTest {
 		// THEN
 		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
 		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
-		List<FireAndFloodPersonDTO> inhabitantsList = new ArrayList<>();
 		Integer adult1Age = LocalDate.now().getYear() - 1980;
-		inhabitantsList.add(new FireAndFloodPersonDTO("lname1", "phone1", adult1Age, medicalRecords));
-
-		PeopleAndStationNumberOfAddressDTO testResult = new PeopleAndStationNumberOfAddressDTO(inhabitantsList, 1);
-		assertEquals(testResult, result);
+		assertEquals("lname1", result.getPeopleOfAddress().get(0).getLastName());
+		assertEquals("phone1", result.getPeopleOfAddress().get(0).getPhone());
+		assertEquals(adult1Age, result.getPeopleOfAddress().get(0).getAge());
+		assertEquals(medicalRecords, result.getPeopleOfAddress().get(0).getMedicalRecords());
+		assertEquals(1, result.getStationNumber());
 	}
 }

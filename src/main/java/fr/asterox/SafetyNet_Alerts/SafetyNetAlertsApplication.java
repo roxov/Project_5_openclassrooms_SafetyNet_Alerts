@@ -16,10 +16,10 @@ import fr.asterox.SafetyNet_Alerts.technical.dataCreation.GenerateHardCodedData;
 @SpringBootApplication
 public class SafetyNetAlertsApplication {
 // Instance du logger avec en paramètre le nom donné à l'instance.
-	private static final Logger logger = LogManager.getLogger(SafetyNetAlertsApplication.class);
+	private static final Logger LOGGER = LogManager.getLogger(SafetyNetAlertsApplication.class);
 
 	public static void main(String[] args) throws IOException {
-		logger.info("Initializing SafetyNet_Alerts");
+		LOGGER.info("Initializing SafetyNet_Alerts");
 		SpringApplication.run(SafetyNetAlertsApplication.class, args);
 	}
 

@@ -1,0 +1,22 @@
+{
+    "persons": [
+        { "firstName":"fname1", "lastName":"lname1", "address":"street 1", "city":"Culver", "zip":"123", "phone":"phone1", "email":"email1" },
+        { "firstName":"fname2", "lastName":"lname2", "address":"street 1", "city":"Culver", "zip":"123", "phone":"phone2", "email":"email2" },
+        { "firstName":"fname3", "lastName":"lname3", "address":"street 2", "city":"Culver", "zip":"123", "phone":"phone3", "email":"email3" },
+        { "firstName":"fname4", "lastName":"lname4", "address":"street 3", "city":"Culver", "zip":"123", "phone":"phone4", "email":"email4" },
+        { "firstName":"fname5", "lastName":"lname5", "address":"street 4", "city":"Culver", "zip":"123", "phone":"phone5", "email":"email5" }
+        ], 
+    "firestations": [
+	{ "address":"street 1", "station":"3" },
+        { "address":"street 2", "station":"2" },
+        { "address":"street 4", "station":"1" },
+        { "address":"street 3", "station":"2" }
+	],
+    "medicalrecords": [
+        { "firstName":"fname1", "lastName":"Boyd", "birthdate":"03/06/1989", "medications":["medications1", "medications2", "medications3"], "allergies":[] },
+        { "firstName":"fname2", "lastName":"Boyd", "birthdate":"02/18/2012", "medications":[], "allergies":["allergies1"] },
+        { "firstName":"fname3", "lastName":"Boyd", "birthdate":"09/06/2017", "medications":[], "allergies":[] },
+        { "firstName":"fname4", "lastName":"Boyd","birthdate":"01/08/1986", "medications":["medications1"], "allergies":["allergies1"] },
+        { "firstName":"fname5", "lastName":"Marrack", "birthdate":"01/03/1989", "medications":[], "allergies":[] }
+        ] 
+}
