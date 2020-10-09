@@ -17,23 +17,11 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
 public class PersonDAO implements IPersonDAO {
 
 	@Autowired
-	private Data data;
+	public Data data;
 
 	@Override
 	public List<Person> getPersonsList() {
 		return data.getPersonsList();
-	}
-
-	@Override
-	public void addPerson(Person person) {
-	}
-
-	@Override
-	public void updatePerson(Person person) {
-	}
-
-	@Override
-	public void deletePerson(Person person) {
 	}
 
 }

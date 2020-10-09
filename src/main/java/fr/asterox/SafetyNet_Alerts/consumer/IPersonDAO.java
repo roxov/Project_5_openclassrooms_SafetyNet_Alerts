@@ -6,16 +6,10 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
 
 /**
  * 
- * Update or get persons data.
+ * Get persons List from data source.
  *
  */
 
 public interface IPersonDAO {
 	public List<Person> getPersonsList();
-
-	public void addPerson(Person person);
-
-	public void updatePerson(Person person);
-
-	public void deletePerson(Person person);
 }

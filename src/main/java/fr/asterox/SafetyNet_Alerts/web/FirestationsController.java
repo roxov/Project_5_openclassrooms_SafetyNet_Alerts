@@ -33,21 +33,25 @@ public class FirestationsController {
 
 	@GetMapping(value = "/firestation")
 	public PeopleAndCountForStationDTO getInfoForPersonsServedByStation(@RequestParam int stationNumber) {
+		LOGGER.info("Getting People and Count of Children and Adults of the Station for Firestation Request");
 		return firestationsService.getInfoOnPersonsServedByStation(stationNumber);
 	}
 
 	@GetMapping(value = "/phoneAlert")
 	public List<String> getPhonesListAssignedToFirestation(@RequestParam int firestation) {
+		LOGGER.info("Getting Phones List Assigned To The Station for phoneAlert Request");
 		return firestationsService.getPhoneOfPersonsServedByStation(firestation);
 	}
 
 	@GetMapping(value = "/flood/stations")
 	public List<HouseholdDTO> getHouseholdsServedByStations(@RequestParam List<Integer> stations) {
+		LOGGER.info("Getting People in Households Served By Station for Flood Request");
 		return firestationsService.getHouseholdsServedByStations(stations);
 	}
 
 	@PostMapping(value = "/firestation")
 	public void addFirestation(@RequestBody Firestation firestation) {
+		LOGGER.info("Adding new firestation");
 //		Firestation firestationAdded = 
 		firestationsService.addFirestation(firestation);
 //		if (firestationAdded == null) {
@@ -58,11 +62,13 @@ public class FirestationsController {
 
 	@PutMapping(value = "/firestation")
 	public void updateFirestation(@RequestBody Firestation firestation) {
+		LOGGER.info("Updating firestation");
 		firestationsService.updateFirestation(firestation);
 	}
 
 	@DeleteMapping(value = "/firestation")
 	public void deleteFirestation(@RequestBody Firestation firestation) {
+		LOGGER.info("Deleting firestation");
 		firestationsService.deleteFirestation(firestation);
 	}
 

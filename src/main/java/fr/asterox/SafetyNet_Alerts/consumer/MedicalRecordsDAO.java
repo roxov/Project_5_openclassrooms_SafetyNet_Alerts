@@ -14,6 +14,7 @@ public class MedicalRecordsDAO implements IMedicalRecordsDAO {
 
 	@Override
 	public void addMedicalRecords(MedicalRecords medicalRecords) {
+
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package fr.asterox.SafetyNet_Alerts.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,9 +22,24 @@ public class PersonsService implements IPersonsService {
 	@Autowired
 	private PersonDAO personDAO;
 
+	private List<Person> allPersonsList;
+	private Map<String, Person> PersonsIdentifiedByNames;
+
+	private void getPersonsList() {
+		allPersonsList = personDAO.getPersonsList();
+	}
+
+	private void getPersonsMap() {
+		getPersonsList();
+		for (Person person : allPersonsList) {
+			String key = person.getFirstName() + person.getLastName();
+			PersonsIdentifiedByNames.put(key, person);
+		}
+	}
+
 	@Override
 	public List<PersonInfoDTO> getInhabitantsInfo(String firstName, String lastName) {
-		List<Person> allPersonsList = personDAO.getPersonsList();
+		getPersonsList();
 		List<PersonInfoDTO> personsSelectedByLastNameList = new ArrayList<>();
 		for (Person person : allPersonsList) {
 			if (person.getLastName().equals(lastName)) {
@@ -40,7 +56,7 @@ public class PersonsService implements IPersonsService {
 
 	@Override
 	public List<String> getEmailsListOfCity(String city) {
-		List<Person> allPersonsList = personDAO.getPersonsList();
+		getPersonsList();
 		List<String> emailsListOfTheCity = new ArrayList<>();
 		for (Person person : allPersonsList) {
 			if (person.getAddress().getCity().equals(city)) {
@@ -53,19 +69,29 @@ public class PersonsService implements IPersonsService {
 
 	@Override
 	public void addPerson(Person person) {
+		getPersonsList();
+		allPersonsList.add(person);
 		LOGGER.info("Adding a person");
-		personDAO.addPerson(person);
 	}
 
 	@Override
 	public void updatePerson(Person person) {
+		getPersonsMap();
+		String personToUpdate = person.getFirstName() + person.getLastName();
+		int index = allPersonsList.indexOf(PersonsIdentifiedByNames.get(personToUpdate));
+		allPersonsList.set(index, person);
 		LOGGER.info("Updating a person");
-		personDAO.updatePerson(person);
+
 	}
 
 	@Override
-	public void deletePerson(Person person) {
+	public void deletePerson(String firstName, String lastName) {
+		// TODO : null
+		getPersonsMap();
+		String personToDelete = firstName + lastName;
+		int index = allPersonsList.indexOf(PersonsIdentifiedByNames.get(personToDelete));
+		allPersonsList.remove(index);
 		LOGGER.info("Deleting a person");
-		personDAO.deletePerson(person);
+
 	}
 }

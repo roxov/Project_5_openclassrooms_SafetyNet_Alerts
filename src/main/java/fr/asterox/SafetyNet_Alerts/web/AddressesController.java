@@ -34,7 +34,7 @@ public class AddressesController {
 
 	@GetMapping(value = "/fire")
 	public PeopleAndStationNumberOfAddressDTO getInhabitantsAndStationOfTheAddress(@RequestParam String address) {
-		LOGGER.info("Getting People and Station Number Response for Fire Request");
+		LOGGER.info("Getting People and Station Number for Fire Request");
 		return addressesService.getInhabitantsAndStationOfTheAddress(address);
 	}
 }

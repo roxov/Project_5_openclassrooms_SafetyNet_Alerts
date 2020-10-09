@@ -111,4 +111,5 @@ public class PersonsServiceTest {
 		emailsListResult.add("email2");
 		assertEquals(emailsListResult, result);
 	}
+
 }

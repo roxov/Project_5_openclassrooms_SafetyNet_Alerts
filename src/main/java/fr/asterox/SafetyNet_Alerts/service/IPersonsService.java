@@ -36,5 +36,5 @@ public interface IPersonsService {
 
 	public void updatePerson(Person person);
 
-	public void deletePerson(Person person);
+	public void deletePerson(String firstName, String lastName);
 }

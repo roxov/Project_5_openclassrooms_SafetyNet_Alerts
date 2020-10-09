@@ -27,16 +27,19 @@ public class MedicalRecordsController {
 
 	@PostMapping(value = "/medicalRecord")
 	public void addMedicalRecords(@RequestBody MedicalRecords medicalRecords) {
+		LOGGER.info("Adding new Medical Records");
 		medicalRecordsService.addMedicalRecords(medicalRecords);
 	}
 
 	@PutMapping(value = "/medicalRecord")
 	public void updateMedicalRecords(@RequestBody MedicalRecords medicalRecords) {
+		LOGGER.info("Updating Medical Records");
 		medicalRecordsService.updateMedicalRecords(medicalRecords);
 	}
 
 	@DeleteMapping(value = "/medicalRecord")
 	public void deleteMedicalRecords(@RequestBody MedicalRecords medicalRecords) {
+		LOGGER.info("Deleting Medical Records");
 		medicalRecordsService.deleteMedicalRecords(medicalRecords);
 	}
 

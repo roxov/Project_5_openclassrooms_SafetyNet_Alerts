@@ -32,26 +32,31 @@ public class PersonsController {
 
 	@GetMapping(value = "/personInfo")
 	public List<PersonInfoDTO> getInhabitantsInfo(@RequestParam String firstName, String lastName) {
+		LOGGER.info("Getting Info on People With The Given Last Name for personInfo Request");
 		return personsService.getInhabitantsInfo(firstName, lastName);
 	}
 
 	@GetMapping(value = "/communityEmail")
 	public List<String> getEmailList(@RequestParam String city) {
+		LOGGER.info("Getting Emails List of the city for communityEmail Request");
 		return personsService.getEmailsListOfCity(city);
 	}
 
 	@PostMapping(value = "/person")
 	public void addPerson(@RequestBody Person person) {
+		LOGGER.info("Adding new Person");
 		personsService.addPerson(person);
 	}
 
 	@PutMapping(value = "/person")
 	public void updatePerson(@RequestBody Person person) {
+		LOGGER.info("Updating Person");
 		personsService.updatePerson(person);
 	}
 
 	@DeleteMapping(value = "/person")
-	public void deletePerson(@RequestBody Person person) {
-		personsService.deletePerson(person);
+	public void deletePerson(@RequestParam String firstName, String lastName) {
+		LOGGER.info("Deleting Person");
+		personsService.deletePerson(firstName, lastName);
 	}
 }
