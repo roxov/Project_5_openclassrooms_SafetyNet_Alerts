@@ -3,7 +3,6 @@ package fr.asterox.SafetyNet_Alerts.service;
 import java.util.List;
 
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
-import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.web.DTO.HouseholdDTO;
 import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndCountForStationDTO;
 
@@ -14,13 +13,6 @@ import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndCountForStationDTO;
  */
 
 public interface IFirestationsService {
-
-	/**
-	 * 
-	 * @param stationNumber
-	 * @return personsServedByStationList, the list of people served by station
-	 */
-	public List<Person> getPersonsServedByStation(int stationNumber);
 
 	/**
 	 * endpoint : firestation?stationNumber=<station_number>

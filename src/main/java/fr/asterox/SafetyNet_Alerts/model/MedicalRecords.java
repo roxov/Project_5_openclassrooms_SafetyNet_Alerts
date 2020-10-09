@@ -6,10 +6,6 @@ public class MedicalRecords {
 	private List<String> medications;
 	private List<String> allergies;
 
-	public MedicalRecords() {
-		super();
-	}
-
 	public MedicalRecords(List<String> medications, List<String> allergies) {
 		super();
 		this.medications = medications;

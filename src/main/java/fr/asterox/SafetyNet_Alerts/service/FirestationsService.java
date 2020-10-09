@@ -2,7 +2,9 @@ package fr.asterox.SafetyNet_Alerts.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,34 +32,42 @@ public class FirestationsService implements IFirestationsService {
 	@Autowired
 	public HouseholdDAO householdDAO;
 
-	@Override
-	public List<Person> getPersonsServedByStation(int stationNumber) {
-		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
-		List<Household> allHouseholdsList = householdDAO.getHouseholdsList();
-		List<Person> personsServedByStationList = new ArrayList<>();
+	private List<Firestation> allFirestationsList;
+	private List<Household> allHouseholdsList;
+	Map<Integer, List<Address>> firestationsMap;
+	Map<Address, List<Person>> householdsMap;
 
+	private void getFirestationsAndHouseholdsMaps() {
+		allFirestationsList = firestationDAO.getFirestationsList();
+		firestationsMap = new HashMap<>();
 		for (Firestation firestation : allFirestationsList) {
-			if (firestation.getStationNumber() == stationNumber) {
-				List<Address> addressesServedByStation = firestation.getAdressesList();
-				for (Address address : addressesServedByStation) {
-					for (Household household : allHouseholdsList) {
-						if (household.getAddress().equals(address)) {
-							List<Person> personsInHousehold = household.getPersonsList();
-							for (Person person : personsInHousehold) {
-								personsServedByStationList.add(person);
-							}
-							break;
-						}
-					}
-				}
+			firestationsMap.put(firestation.getStationNumber(), firestation.getAdressesList());
+		}
+
+		allHouseholdsList = householdDAO.getHouseholdsList();
+		householdsMap = new HashMap<>();
+		for (Household household : allHouseholdsList) {
+			householdsMap.put(household.getAddress(), household.getPersonsList());
+		}
+	}
+
+	private List<Person> getPersonsServedByStation(int stationNumber) {
+		getFirestationsAndHouseholdsMaps();
+		List<Person> personsServedByStationList = new ArrayList<>();
+		List<Address> addressesServedByStation = firestationsMap.get(stationNumber);
+		for (Address address : addressesServedByStation) {
+			List<Person> personsAtTheAddress = householdsMap.get(address);
+			for (Person person : personsAtTheAddress) {
+				personsServedByStationList.add(person);
 			}
 		}
+		LOGGER.info("Getting persons served by the station");
 		return personsServedByStationList;
 	}
 
 	@Override
 	public PeopleAndCountForStationDTO getInfoOnPersonsServedByStation(int stationNumber) {
-		List<Person> personsServedByStationList = this.getPersonsServedByStation(stationNumber);
+		List<Person> personsServedByStationList = getPersonsServedByStation(stationNumber);
 		List<PersonOfStationDTO> personOfStationDTOList = new ArrayList<>();
 		int numberOfAdults = 0;
 		int numberOfChildren = 0;
@@ -70,76 +80,67 @@ public class FirestationsService implements IFirestationsService {
 			LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
 			if (birthdate.plusYears(18).isAfter(LocalDate.now())) {
 				numberOfChildren = numberOfChildren + 1;
+			} else {
+				numberOfAdults = numberOfAdults + 1;
 			}
-			numberOfAdults = numberOfAdults + 1;
+
 		}
+		LOGGER.info("Response to Firestation : list of persons served by the station and count of children and adults");
 		return new PeopleAndCountForStationDTO(personOfStationDTOList, numberOfAdults, numberOfChildren);
 	}
 
 	@Override
 	public List<String> getPhoneOfPersonsServedByStation(int stationNumber) {
-		List<Person> personsServedByStationList = this.getPersonsServedByStation(stationNumber);
+		List<Person> personsServedByStationList = getPersonsServedByStation(stationNumber);
 		List<String> phonesList = new ArrayList<>();
 		for (Person person : personsServedByStationList) {
 			String phone = person.getPhone();
 			phonesList.add(phone);
 		}
+		LOGGER.info("Response to Phone Alert Request : Getting list of phones of people served by the station");
 		return phonesList;
 	}
 
 	@Override
 	public List<HouseholdDTO> getHouseholdsServedByStations(List<Integer> stationNumbersList) {
 
-		List<Household> allHouseholdsList = householdDAO.getHouseholdsList();
-		List<Firestation> allFirestationsList = firestationDAO.getFirestationsList();
-		List<Household> householdsServedByStationsList = new ArrayList<>();
+		getFirestationsAndHouseholdsMaps();
 		List<HouseholdDTO> householdsDTOList = new ArrayList<>();
 
 		for (int i : stationNumbersList) {
-			for (Firestation firestation : allFirestationsList) {
-				if (firestation.getStationNumber() == i) {
-					List<Address> addressesServedByStation = firestation.getAdressesList();
-					for (Address address : addressesServedByStation)
-						for (Household household : allHouseholdsList) {
-							if (household.getAddress().equals(address)) {
-								householdsServedByStationsList.add(household);
-							}
-						}
+			List<Address> addressesServedByStation = firestationsMap.get(i);
+			for (Address address : addressesServedByStation) {
+				List<Person> personsInHousehold = householdsMap.get(address);
+				List<FireAndFloodPersonDTO> personsDTOOfHousehold = new ArrayList<>();
+				for (Person person : personsInHousehold) {
+					LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
+					int age = LocalDate.now().getYear() - birthdate.getYear();
+					personsDTOOfHousehold.add(new FireAndFloodPersonDTO(person.getLastName(), person.getPhone(), age,
+							person.getMedicalRecords()));
 				}
-				break;
+				HouseholdDTO householdDTO = new HouseholdDTO(personsDTOOfHousehold);
+				householdsDTOList.add(householdDTO);
 			}
 		}
-
-		for (Household household : householdsServedByStationsList) {
-
-			List<Person> personsOfHousehold = household.getPersonsList();
-			List<FireAndFloodPersonDTO> personsDTOOfHousehold = new ArrayList<>();
-			for (Person person : personsOfHousehold) {
-				LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
-				int age = LocalDate.now().getYear() - birthdate.getYear();
-				personsDTOOfHousehold.add(new FireAndFloodPersonDTO(person.getLastName(), person.getPhone(), age,
-						person.getMedicalRecords()));
-
-			}
-			HouseholdDTO householdDTO = new HouseholdDTO(personsDTOOfHousehold);
-			householdsDTOList.add(householdDTO);
-		}
-
+		LOGGER.info("Response to Flood Request : Getting people served by the stations, sorted by household");
 		return householdsDTOList;
 	}
 
 	@Override
 	public void addFirestation(Firestation firestation) {
+		LOGGER.info("Adding a firestation");
 		firestationDAO.addFirestation(firestation);
 	}
 
 	@Override
 	public void updateFirestation(Firestation firestation) {
+		LOGGER.info("Updating a firestation");
 		firestationDAO.updateFirestation(firestation);
 	}
 
 	@Override
 	public void deleteFirestation(Firestation firestation) {
+		LOGGER.info("Deleting a firestation");
 		firestationDAO.deleteFirestation(firestation);
 	}
 }

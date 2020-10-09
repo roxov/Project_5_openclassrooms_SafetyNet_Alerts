@@ -12,12 +12,6 @@ public class Person {
 	private String email;
 	private MedicalRecords medicalRecords;
 
-	public Person() {
-		super();
-	}
-
-// Constructeur pour les tests
-
 	public Person(String firstName, String lastName, String birthdate, Address address, String phone, String email,
 			MedicalRecords medicalRecords) {
 		super();

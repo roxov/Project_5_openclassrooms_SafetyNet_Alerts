@@ -1,7 +1,6 @@
 package fr.asterox.SafetyNet_Alerts.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,17 +34,22 @@ public class FirestationsServiceTest {
 	@Autowired
 	private FirestationsService firestationsService;
 
-	MedicalRecords medicalRecords;
-	List<Person> personsList;
-
-	@MockBean
-	private FirestationsService firestationsServiceMock;
-
 	@MockBean
 	private FirestationDAO firestationDAO;
 
 	@MockBean
 	private HouseholdDAO householdDAO;
+
+	MedicalRecords medicalRecords;
+	Address address;
+	List<Address> addressesList;
+	Person adult1;
+	int adultAge;
+	Person child1;
+	int childAge;
+	List<Person> personsList;
+	List<Firestation> firestationsList;
+	List<Household> householdsList;
 
 	@BeforeEach
 	private void setUpPerTest() {
@@ -53,26 +57,27 @@ public class FirestationsServiceTest {
 		medicationsAndAllergies.add("medicationsAndAllergies");
 		medicalRecords = new MedicalRecords(medicationsAndAllergies, medicationsAndAllergies);
 
+		address = new Address("street", 123, "city");
+		addressesList = new ArrayList<>();
+		adult1 = new Person("adultname1", "lname1", "01/01/1980", address, "adPhone1", "adEmail1", medicalRecords);
+		adultAge = LocalDate.now().getYear() - 1980;
+		child1 = new Person("childname1", "lname1", "01/01/2010", address, "chPhone1", "chEmail1", medicalRecords);
+		childAge = LocalDate.now().getYear() - 2010;
 		personsList = new ArrayList<>();
+		firestationsList = new ArrayList<>();
+		householdsList = new ArrayList<>();
 	}
 
 	@Test
 	public void givenAChildAndAnAdultInHousehold_whenGetInfoOnPersonsServedByStation_thenInfoAndCountOfAdultsAndChildren() {
 		// GIVEN
-		Address address1 = new Address("street1", 123, "city1");
-		Person child1 = new Person("childname1", "lname1", "01/01/2012", address1, "phone1", "email1", medicalRecords);
-		Person adult1 = new Person("adultname1", "lname1", "01/01/1980", address1, "phone2", "email2", medicalRecords);
 		personsList.add(child1);
 		personsList.add(adult1);
-		Household household1 = new Household(address1, personsList);
-		List<Household> householdsList = new ArrayList<>();
-		householdsList.add(household1);
-
-		List<Firestation> firestationsList = new ArrayList<>();
-		List<Address> addressesList = new ArrayList<>();
-		addressesList.add(address1);
-		Firestation firestation1 = new Firestation(1, addressesList);
-		firestationsList.add(firestation1);
+		Household household = new Household(address, personsList);
+		householdsList.add(household);
+		addressesList.add(address);
+		Firestation firestation = new Firestation(1, addressesList);
+		firestationsList.add(firestation);
 
 		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
 		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
@@ -85,73 +90,39 @@ public class FirestationsServiceTest {
 		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
 		assertEquals("childname1", result.getPeopleOfStation().get(0).getFirstName());
 		assertEquals("lname1", result.getPeopleOfStation().get(0).getLastName());
-		assertEquals(address1, result.getPeopleOfStation().get(0).getAddress());
-		assertEquals("phone1", result.getPeopleOfStation().get(0).getFirstName());
+		assertEquals(address, result.getPeopleOfStation().get(0).getAddress());
+		assertEquals("chPhone1", result.getPeopleOfStation().get(0).getPhone());
 		assertEquals("adultname1", result.getPeopleOfStation().get(1).getFirstName());
 		assertEquals("lname1", result.getPeopleOfStation().get(1).getLastName());
-		assertEquals(address1, result.getPeopleOfStation().get(1).getAddress());
-		assertEquals("phone2", result.getPeopleOfStation().get(1).getFirstName());
+		assertEquals(address, result.getPeopleOfStation().get(1).getAddress());
+		assertEquals("adPhone1", result.getPeopleOfStation().get(1).getPhone());
 		assertEquals(1, result.getNumberOfAdults());
 		assertEquals(1, result.getNumberOfChildren());
 	}
 
-	// TODO : changer cette méthode
-//	@Test
-//	public void givenTwoHouseholdsWithOnlyOneServedByStation_whenGetPersonsServedByStation_thenReturnPhonesOfOneHousehold() {
-//		// GIVEN
-//		Address address1 = new Address("street1", 123, "city1");
-//		List<Person> personsList1 = new ArrayList<>();
-//		Person person1 = new Person("fname1", "lname1", "01/01/1980", address1, "phone1", "email1", medicalRecords);
-//		personsList1.add(person1);
-//		Household household1 = new Household(address1, personsList1);
-//		Address address2 = new Address("street2", 123, "city2");
-//		List<Person> personsList2 = new ArrayList<>();
-//		Person person2 = new Person("fname2", "lname2", "01/01/1980", address2, "phone2", "email2", medicalRecords);
-//		personsList1.add(person2);
-//		Household household2 = new Household(address2, personsList2);
-//		List<Household> householdsList = new ArrayList<>();
-//		householdsList.add(household1);
-//		householdsList.add(household2);
-//
-//		List<Firestation> firestationsList = new ArrayList<>();
-//		List<Address> addressesList = new ArrayList<>();
-//		addressesList.add(address1);
-//		Firestation firestation1 = new Firestation(1, addressesList);
-//		firestationsList.add(firestation1);
-//
-//		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
-//		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
-//
-//		// WHEN
-//		List<Person> result = firestationsService.getPersonsServedByStation(1);
-//
-//		// THEN
-//		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-//		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
-//		List<PersonOfStationDTO> peopleOfStation = new ArrayList<>();
-//		peopleOfStation.add(new PersonOfStationDTO("fname1", "lname1", address1, "phone1"));
-//		PeopleAndCountForStationDTO testResult = new PeopleAndCountForStationDTO(peopleOfStation, 1, 0);
-//		assertEquals(testResult, result);
-//	}
-
 	@Test
 	public void givenListOfTwoPersonsServedByStation_whenGetPhonesListOfStation_thenReturnPhonesList() {
 		// GIVEN
-		Address address = new Address("street", 123, "city");
-		Person person1 = new Person("fname1", "lname1", "01/01/1980", address, "phone1", "email1", medicalRecords);
-		Person person2 = new Person("fname2", "lname2", "01/01/1980", address, "phone2", "email2", medicalRecords);
-		personsList.add(person1);
-		personsList.add(person2);
-		when(firestationsServiceMock.getPersonsServedByStation(1)).thenReturn(personsList);
+		personsList.add(child1);
+		personsList.add(adult1);
+		Household household = new Household(address, personsList);
+		householdsList.add(household);
+		addressesList.add(address);
+		Firestation firestation = new Firestation(1, addressesList);
+		firestationsList.add(firestation);
+
+		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
+		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
 
 		// WHEN
 		List<String> result = firestationsService.getPhoneOfPersonsServedByStation(1);
 
 		// THEN
-		verify(firestationsServiceMock, Mockito.times(1)).getPersonsServedByStation(anyInt());
+		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
+		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
 		List<String> phonesListTest = new ArrayList<>();
-		phonesListTest.add("phone1");
-		phonesListTest.add("phone2");
+		phonesListTest.add("chPhone1");
+		phonesListTest.add("adPhone1");
 		assertEquals(phonesListTest, result);
 
 	}
@@ -159,27 +130,21 @@ public class FirestationsServiceTest {
 	@Test
 	public void givenOneStationNumberAndTwoFirestations_whenGetHouseholdForStation_thenReturnHouseholdOfOneFirestation() {
 		// GIVEN
-		Address address1 = new Address("street1", 123, "city1");
-		List<Person> personsList1 = new ArrayList<>();
-		Person person1 = new Person("fname1", "lname1", "01/01/1980", address1, "phone1", "email1", medicalRecords);
-		personsList1.add(person1);
-		Household household1 = new Household(address1, personsList1);
+		personsList.add(adult1);
+		Household household1 = new Household(address, personsList);
 		Address address2 = new Address("street2", 123, "city2");
 		List<Person> personsList2 = new ArrayList<>();
-		Person person2 = new Person("fname2", "lname2", "01/01/1980", address2, "phone2", "email2", medicalRecords);
-		personsList2.add(person2);
+		Person adult2 = new Person("adultname2", "lname2", "01/01/1980", address2, "phone2", "email2", medicalRecords);
+		personsList2.add(adult2);
 		Household household2 = new Household(address2, personsList2);
-		List<Household> householdsList = new ArrayList<>();
 		householdsList.add(household1);
 		householdsList.add(household2);
 
-		List<Firestation> firestationsList = new ArrayList<>();
-		List<Address> addressesList1 = new ArrayList<>();
-		addressesList1.add(address1);
-		Firestation firestation1 = new Firestation(1, addressesList1);
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
 		firestationsList.add(firestation1);
 		List<Address> addressesList2 = new ArrayList<>();
-		addressesList1.add(address2);
+		addressesList2.add(address2);
 		Firestation firestation2 = new Firestation(2, addressesList2);
 		firestationsList.add(firestation2);
 
@@ -195,37 +160,31 @@ public class FirestationsServiceTest {
 		// THEN
 		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
 		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
-		int age1 = LocalDate.now().getYear() - 1980;
 		assertEquals("lname1", result.get(0).getPersonsListOfHousehold().get(0).getLastName());
-		assertEquals("phone1", result.get(0).getPersonsListOfHousehold().get(0).getPhone());
-		assertEquals(age1, result.get(0).getPersonsListOfHousehold().get(0).getAge());
+		assertEquals("adPhone1", result.get(0).getPersonsListOfHousehold().get(0).getPhone());
+		assertEquals(adultAge, result.get(0).getPersonsListOfHousehold().get(0).getAge());
 		assertEquals(medicalRecords, result.get(0).getPersonsListOfHousehold().get(0).getMedicalRecords());
 	}
 
 	@Test
 	public void givenTwoStationNumbersCorrespondingToTwoFirestations_whenGetHouseholdForStations_thenReturnHouseholdsForEachFirestation() {
 		// GIVEN
-		Address address1 = new Address("street1", 123, "city1");
-		List<Person> personsList1 = new ArrayList<>();
-		Person person1 = new Person("fname1", "lname1", "01/01/1980", address1, "phone1", "email1", medicalRecords);
-		personsList1.add(person1);
-		Household household1 = new Household(address1, personsList1);
+		personsList.add(adult1);
+		Household household1 = new Household(address, personsList);
 		Address address2 = new Address("street2", 123, "city2");
 		List<Person> personsList2 = new ArrayList<>();
-		Person person2 = new Person("fname2", "lname2", "01/01/1980", address2, "phone2", "email2", medicalRecords);
+		Person person2 = new Person("adultname2", "lname2", "01/01/1980", address2, "adPhone2", "email2",
+				medicalRecords);
 		personsList2.add(person2);
 		Household household2 = new Household(address2, personsList2);
-		List<Household> householdsList = new ArrayList<>();
 		householdsList.add(household1);
 		householdsList.add(household2);
 
-		List<Firestation> firestationsList = new ArrayList<>();
-		List<Address> addressesList1 = new ArrayList<>();
-		addressesList1.add(address1);
-		Firestation firestation1 = new Firestation(1, addressesList1);
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
 		firestationsList.add(firestation1);
 		List<Address> addressesList2 = new ArrayList<>();
-		addressesList1.add(address2);
+		addressesList2.add(address2);
 		Firestation firestation2 = new Firestation(2, addressesList2);
 		firestationsList.add(firestation2);
 
@@ -242,14 +201,13 @@ public class FirestationsServiceTest {
 		// THEN
 		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
 		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
-		int age = LocalDate.now().getYear() - 1980;
 		assertEquals("lname1", result.get(0).getPersonsListOfHousehold().get(0).getLastName());
-		assertEquals("phone1", result.get(0).getPersonsListOfHousehold().get(0).getPhone());
-		assertEquals(age, result.get(0).getPersonsListOfHousehold().get(0).getAge());
+		assertEquals("adPhone1", result.get(0).getPersonsListOfHousehold().get(0).getPhone());
+		assertEquals(adultAge, result.get(0).getPersonsListOfHousehold().get(0).getAge());
 		assertEquals(medicalRecords, result.get(0).getPersonsListOfHousehold().get(0).getMedicalRecords());
 		assertEquals("lname2", result.get(1).getPersonsListOfHousehold().get(0).getLastName());
-		assertEquals("phone2", result.get(1).getPersonsListOfHousehold().get(0).getPhone());
-		assertEquals(age, result.get(1).getPersonsListOfHousehold().get(0).getAge());
+		assertEquals("adPhone2", result.get(1).getPersonsListOfHousehold().get(0).getPhone());
+		assertEquals(adultAge, result.get(1).getPersonsListOfHousehold().get(0).getAge());
 		assertEquals(medicalRecords, result.get(1).getPersonsListOfHousehold().get(0).getMedicalRecords());
 	}
 

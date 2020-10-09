@@ -7,10 +7,6 @@ public class Household {
 	private Address address;
 	private List<Person> personsList = new ArrayList<>();
 
-	public Household() {
-		super();
-	}
-
 	public Household(Address address, List<Person> personsList) {
 		super();
 		this.address = address;

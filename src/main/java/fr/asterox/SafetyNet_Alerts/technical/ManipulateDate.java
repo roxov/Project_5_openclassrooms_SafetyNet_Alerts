@@ -17,6 +17,7 @@ public class ManipulateDate {
 		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 		LocalDate localDate = LocalDate.parse(date, formatter);
+		LOGGER.debug("Converting String date to LocalDateTime");
 		return localDate;
 	}
 }

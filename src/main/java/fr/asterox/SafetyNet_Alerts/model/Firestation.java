@@ -6,10 +6,6 @@ public class Firestation {
 	private int stationNumber;
 	private List<Address> adressesList;
 
-	public Firestation() {
-		super();
-	}
-
 	public Firestation(int stationNumber, List<Address> adressesList) {
 		super();
 		this.adressesList = adressesList;

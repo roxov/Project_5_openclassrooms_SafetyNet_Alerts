@@ -26,7 +26,7 @@ public class PersonsService implements IPersonsService {
 		List<Person> allPersonsList = personDAO.getPersonsList();
 		List<PersonInfoDTO> personsSelectedByLastNameList = new ArrayList<>();
 		for (Person person : allPersonsList) {
-			if (person.getLastName().equals(lastName) && person.getFirstName().equals(firstName)) {
+			if (person.getLastName().equals(lastName)) {
 				LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
 				int age = LocalDate.now().getYear() - birthdate.getYear();
 				PersonInfoDTO personInfoDTO = new PersonInfoDTO(person.getLastName(), person.getAddress(), age,
@@ -34,6 +34,7 @@ public class PersonsService implements IPersonsService {
 				personsSelectedByLastNameList.add(personInfoDTO);
 			}
 		}
+		LOGGER.info("Response to Person Info : Getting info of the person");
 		return personsSelectedByLastNameList;
 	}
 
@@ -46,21 +47,25 @@ public class PersonsService implements IPersonsService {
 				emailsListOfTheCity.add(person.getEmail());
 			}
 		}
+		LOGGER.info("Response to Community Email Request : Getting emails list of the city");
 		return emailsListOfTheCity;
 	}
 
 	@Override
 	public void addPerson(Person person) {
+		LOGGER.info("Adding a person");
 		personDAO.addPerson(person);
 	}
 
 	@Override
 	public void updatePerson(Person person) {
+		LOGGER.info("Updating a person");
 		personDAO.updatePerson(person);
 	}
 
 	@Override
 	public void deletePerson(Person person) {
+		LOGGER.info("Deleting a person");
 		personDAO.deletePerson(person);
 	}
 }

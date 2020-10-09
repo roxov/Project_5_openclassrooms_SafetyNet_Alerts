@@ -3,6 +3,7 @@ package fr.asterox.SafetyNet_Alerts.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,15 +30,25 @@ public class AddressesService implements IAddressesService {
 	@Autowired
 	public FirestationDAO firestationDAO;
 
+	private List<Firestation> allFirestationsList;
+	private List<Household> allHouseholdsList;
+	Map<Integer, List<Address>> firestationsMap;
+	Map<Address, List<Person>> householdsMap;
+
+	private void getFirestationsAndHouseholdsLists() {
+		allFirestationsList = firestationDAO.getFirestationsList();
+		allHouseholdsList = householdDAO.getHouseholdsList();
+	}
+
 	@Override
 	public List<ChildDTO> getPersonsLivingInChildHousehold(String street) {
 		List<Person> personsInHousehold = new ArrayList<>();
 		List<ChildDTO> childrenInHousehold = new ArrayList<>();
 		List<ChildDTO> adultsInHousehold = new ArrayList<>();
 
-		List<Household> householdsList = householdDAO.getHouseholdsList();
+		getFirestationsAndHouseholdsLists();
 
-		for (Household household : householdsList) {
+		for (Household household : allHouseholdsList) {
 			if (household.getAddress().getStreet().equals(street)) {
 				personsInHousehold = household.getPersonsList();
 				for (Person person : personsInHousehold) {
@@ -56,11 +67,13 @@ public class AddressesService implements IAddressesService {
 			}
 		}
 		if (childrenInHousehold.isEmpty()) {
+			LOGGER.info("Response to Child Alert Request : No child at the address");
 			return null;
 		}
 		for (ChildDTO adult : adultsInHousehold) {
 			childrenInHousehold.add(adult);
 		}
+		LOGGER.info("Response to Child Alert Request : Children and adults info");
 		return childrenInHousehold;
 	}
 
@@ -71,8 +84,9 @@ public class AddressesService implements IAddressesService {
 		Integer stationNumber = null;
 		List<FireAndFloodPersonDTO> inhabitantsDTOList = new ArrayList<>();
 
-		List<Household> householdsList = householdDAO.getHouseholdsList();
-		for (Household household : householdsList) {
+		getFirestationsAndHouseholdsLists();
+
+		for (Household household : allHouseholdsList) {
 			if (household.getAddress().getStreet().equals(street)) {
 				inhabitantsList = household.getPersonsList();
 				for (Person person : inhabitantsList) {
@@ -82,13 +96,11 @@ public class AddressesService implements IAddressesService {
 							person.getPhone(), age, person.getMedicalRecords());
 					inhabitantsDTOList.add(FirePersonDTO);
 				}
-
 			}
 			break;
 		}
 
-		List<Firestation> firestationsList = firestationDAO.getFirestationsList();
-		for (Firestation firestation : firestationsList) {
+		for (Firestation firestation : allFirestationsList) {
 			List<Address> addressesListOfStation = firestation.getAdressesList();
 			for (Address address : addressesListOfStation) {
 				if (address.getStreet().equals(street)) {
@@ -97,6 +109,7 @@ public class AddressesService implements IAddressesService {
 				}
 			}
 		}
+		LOGGER.info("Response to Fire Request : Inhabitants and station number of the address");
 		return new PeopleAndStationNumberOfAddressDTO(inhabitantsDTOList, stationNumber);
 	}
 }

@@ -54,6 +54,7 @@ public class GenerateData {
 				iterator.skip();
 			}
 		}
+		LOGGER.debug("Parsing datas from json file");
 	}
 
 	public void parsePersonsData() throws IOException {
@@ -70,36 +71,57 @@ public class GenerateData {
 			case "firstName":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					firstName = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for firstName data");
+					iterator.skip();
 				}
 				break;
 			case "lastName":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					lastName = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for lastName data");
+					iterator.skip();
 				}
 				break;
 			case "address":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					street = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for address data");
+					iterator.skip();
 				}
 				break;
 			case "city":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					city = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for city data");
+					iterator.skip();
 				}
 				break;
 			case "zip":
 				if (iterator.whatIsNext() == ValueType.NUMBER) {
 					zip = iterator.readInt();
+				} else {
+					LOGGER.error("Illegal type for zip data");
+					iterator.skip();
 				}
 				break;
 			case "phone":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					phone = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for phone data");
+					iterator.skip();
 				}
 				break;
 			case "email":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					email = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for email data");
+					iterator.skip();
 				}
 				break;
 			default:
@@ -115,18 +137,23 @@ public class GenerateData {
 		String street = null;
 		Integer stationNumber = 0;
 		Address address = null;
-		List<Address> addressesListOfTheStation = new ArrayList<>();
 
 		for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
 			switch (field) {
 			case "address":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					street = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for address data");
+					iterator.skip();
 				}
 				break;
 			case "station":
 				if (iterator.whatIsNext() == ValueType.NUMBER) {
 					stationNumber = iterator.readInt();
+				} else {
+					LOGGER.error("Illegal type for station number data");
+					iterator.skip();
 				}
 				break;
 			default:
@@ -153,23 +180,31 @@ public class GenerateData {
 		String birthdate = null;
 		List<String> medicationsList = new ArrayList<>();
 		List<String> allergiesList = new ArrayList<>();
-		MedicalRecords medicalRecords = new MedicalRecords();
 
 		for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
 			switch (field) {
 			case "firstName":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					firstName = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for firstName data");
+					iterator.skip();
 				}
 				break;
 			case "lastName":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					lastName = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for lastName data");
+					iterator.skip();
 				}
 				break;
 			case "birthdate":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					birthdate = iterator.readString();
+				} else {
+					LOGGER.error("Illegal type for birthdate data");
+					iterator.skip();
 				}
 				break;
 			case "medications":
@@ -177,8 +212,10 @@ public class GenerateData {
 					if (iterator.whatIsNext() == ValueType.STRING) {
 						String medications = iterator.readString();
 						medicationsList.add(medications);
+					} else {
+						LOGGER.error("Illegal type for medications data");
+						iterator.skip();
 					}
-					iterator.skip();
 				}
 				break;
 			case "allergies":
@@ -186,8 +223,10 @@ public class GenerateData {
 					if (iterator.whatIsNext() == ValueType.STRING) {
 						String allergies = iterator.readString();
 						allergiesList.add(allergies);
+					} else {
+						LOGGER.error("Illegal type for allergies data");
+						iterator.skip();
 					}
-					iterator.skip();
 				}
 				break;
 			default:
@@ -198,7 +237,7 @@ public class GenerateData {
 		for (Person person : personsList) {
 			if (person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
 				person.setBirthdate(birthdate);
-				person.setMedicalRecords(medicalRecords);
+				person.setMedicalRecords(new MedicalRecords(medicationsList, allergiesList));
 				break;
 			}
 		}
@@ -242,6 +281,7 @@ public class GenerateData {
 //			householdsList.add(new Household(hEntry.getKey(), hEntry.getValue()));
 //		}
 		data.setHouseholdsList(householdsList);
+		LOGGER.debug("Generating a filled Data");
 		return data;
 	}
 }

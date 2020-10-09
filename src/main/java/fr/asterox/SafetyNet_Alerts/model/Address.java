@@ -5,10 +5,6 @@ public class Address {
 	private int zip;
 	private String city;
 
-	public Address() {
-		super();
-	}
-
 	public Address(String street, int zip, String city) {
 		super();
 		this.street = street;

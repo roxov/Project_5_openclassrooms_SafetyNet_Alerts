@@ -17,16 +17,19 @@ public class MedicalRecordsService implements IMedicalRecordsService {
 
 	@Override
 	public void addMedicalRecords(MedicalRecords medicalRecords) {
+		LOGGER.info("Adding Medical Records");
 		medicalRecordsDAO.addMedicalRecords(medicalRecords);
 	}
 
 	@Override
 	public void updateMedicalRecords(MedicalRecords medicalRecords) {
+		LOGGER.info("Updating Medical Records");
 		medicalRecordsDAO.updateMedicalRecords(medicalRecords);
 	}
 
 	@Override
 	public void deleteMedicalRecords(MedicalRecords medicalRecords) {
+		LOGGER.info("Deleting Medical Records");
 		medicalRecordsDAO.deleteMedicalRecords(medicalRecords);
 	}
 }
