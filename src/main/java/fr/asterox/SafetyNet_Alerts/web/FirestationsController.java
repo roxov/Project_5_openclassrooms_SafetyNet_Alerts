@@ -60,14 +60,18 @@ public class FirestationsController {
 //		}
 	}
 
+//	 ajout d'un mapping caserne/adresse ;
+//	 ● mettre à jour le numéro de la caserne de pompiers d'une adresse ;
+//	 ● supprimer le mapping d'une caserne ou d'une adresse.
+
 	@PutMapping(value = "/firestation")
-	public void updateFirestation(@RequestBody Firestation firestation) {
+	public void updateStationNumber(@RequestParam String street, int stationNumber) {
 		LOGGER.info("Updating firestation");
 		firestationsService.updateFirestation(firestation);
 	}
 
 	@DeleteMapping(value = "/firestation")
-	public void deleteFirestation(@RequestBody Firestation firestation) {
+	public void deleteFirestation(@RequestParam int stationNumber) {
 		LOGGER.info("Deleting firestation");
 		firestationsService.deleteFirestation(firestation);
 	}

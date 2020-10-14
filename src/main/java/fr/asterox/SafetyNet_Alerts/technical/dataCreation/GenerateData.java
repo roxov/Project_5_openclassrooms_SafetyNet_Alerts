@@ -46,10 +46,13 @@ public class GenerateData {
 			switch (field) {
 			case "persons":
 				this.parsePersonsData();
+				break;
 			case "firestations":
 				this.parseFirestationsData();
+				break;
 			case "medicalrecords":
 				this.parseMedicalRecordsData();
+				break;
 			default:
 				iterator.skip();
 			}
@@ -66,8 +69,11 @@ public class GenerateData {
 		String phone = null;
 		String email = null;
 
-		for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
-			switch (field) {
+		// for (String field = iterator.readObject(); field != null; field =
+		// iterator.readObject()) {
+		while (iterator.readArray()) {
+			String fieldSt = iterator.readString();
+			switch (fieldSt) {
 			case "firstName":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					firstName = iterator.readString();
@@ -102,7 +108,7 @@ public class GenerateData {
 				break;
 			case "zip":
 				if (iterator.whatIsNext() == ValueType.NUMBER) {
-					zip = iterator.readInt();
+					zip = Integer.parseInt(iterator.readString());
 				} else {
 					LOGGER.error("Illegal type for zip data");
 					iterator.skip();
@@ -127,10 +133,10 @@ public class GenerateData {
 			default:
 				iterator.skip();
 			}
-			Address address = new Address(street, zip, city);
-			Person person = new Person(firstName, lastName, null, address, phone, email, null);
-			personsList.add(person);
 		}
+		Address address = new Address(street, zip, city);
+		Person person = new Person(firstName, lastName, null, address, phone, email, null);
+		personsList.add(person);
 	}
 
 	public void parseFirestationsData() throws IOException {
@@ -138,8 +144,11 @@ public class GenerateData {
 		Integer stationNumber = 0;
 		Address address = null;
 
-		for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
-			switch (field) {
+		// for (String field = iterator.readObject(); field != null; field =
+		// iterator.readObject()) {
+		while (iterator.readArray()) {
+			String fieldSt = iterator.readString();
+			switch (fieldSt) {
 			case "address":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					street = iterator.readString();
@@ -150,7 +159,7 @@ public class GenerateData {
 				break;
 			case "station":
 				if (iterator.whatIsNext() == ValueType.NUMBER) {
-					stationNumber = iterator.readInt();
+					stationNumber = Integer.parseInt(iterator.readString());
 				} else {
 					LOGGER.error("Illegal type for station number data");
 					iterator.skip();
@@ -166,12 +175,11 @@ public class GenerateData {
 					break;
 				}
 			}
-
-			firestationsMap.put(stationNumber, firestationsMap.getOrDefault(stationNumber, new ArrayList<Address>()));
-			List<Address> currentFirestationAddressesList = firestationsMap.get(stationNumber);
-			currentFirestationAddressesList.add(address);
-			firestationsMap.put(stationNumber, currentFirestationAddressesList);
 		}
+		firestationsMap.put(stationNumber, firestationsMap.getOrDefault(stationNumber, new ArrayList<Address>()));
+		List<Address> currentFirestationAddressesList = firestationsMap.get(stationNumber);
+		currentFirestationAddressesList.add(address);
+		firestationsMap.put(stationNumber, currentFirestationAddressesList);
 	}
 
 	public void parseMedicalRecordsData() throws IOException {
@@ -181,8 +189,11 @@ public class GenerateData {
 		List<String> medicationsList = new ArrayList<>();
 		List<String> allergiesList = new ArrayList<>();
 
-		for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
-			switch (field) {
+		// for (String field = iterator.readObject(); field != null; field =
+		// iterator.readObject()) {
+		while (iterator.readArray()) {
+			String fieldSt = iterator.readString();
+			switch (fieldSt) {
 			case "firstName":
 				if (iterator.whatIsNext() == ValueType.STRING) {
 					firstName = iterator.readString();
