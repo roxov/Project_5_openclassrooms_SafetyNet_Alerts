@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import fr.asterox.SafetyNet_Alerts.consumer.PersonDAO;
 import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
@@ -31,7 +31,7 @@ public class PersonsServiceTest {
 	private PersonsService personsService;
 
 	@MockBean
-	private PersonDAO personDAO;
+	private Data data;
 
 	private List<Person> personsList;
 	private Address address;
@@ -54,13 +54,13 @@ public class PersonsServiceTest {
 		// GIVEN
 		Person person2 = new Person("fname2", "lname1", "01/01/1980", address, "phone2", "email2", medicalRecords);
 		personsList.add(person2);
-		when(personDAO.getPersonsList()).thenReturn(personsList);
+		when(data.getPersonsList()).thenReturn(personsList);
 
 		// WHEN
 		List<PersonInfoDTO> result = personsService.getInhabitantsInfo("fname1", "lname1");
 
 		// THEN
-		verify(personDAO, Mockito.times(1)).getPersonsList();
+		verify(data, Mockito.times(1)).getPersonsList();
 		int age = LocalDate.now().getYear() - 1980;
 		assertEquals("lname1", result.get(0).getLastName());
 		assertEquals(address, result.get(0).getAddress());
@@ -79,13 +79,13 @@ public class PersonsServiceTest {
 		// GIVEN
 		Person person2 = new Person("fname2", "lname2", "01/01/1980", address, "phone2", "email2", medicalRecords);
 		personsList.add(person2);
-		when(personDAO.getPersonsList()).thenReturn(personsList);
+		when(data.getPersonsList()).thenReturn(personsList);
 
 		// WHEN
 		List<PersonInfoDTO> result = personsService.getInhabitantsInfo("fname2", "lname2");
 
 		// THEN
-		verify(personDAO, Mockito.times(1)).getPersonsList();
+		verify(data, Mockito.times(1)).getPersonsList();
 		int age = LocalDate.now().getYear() - 1980;
 		assertEquals("lname2", result.get(0).getLastName());
 		assertEquals(address, result.get(0).getAddress());
@@ -100,13 +100,13 @@ public class PersonsServiceTest {
 		Address address2 = new Address("street", 123, "city2");
 		Person person2 = new Person("fname2", "lname2", "01/01/1980", address2, "phone2", "email2", medicalRecords);
 		personsList.add(person2);
-		when(personDAO.getPersonsList()).thenReturn(personsList);
+		when(data.getPersonsList()).thenReturn(personsList);
 
 		// WHEN
 		List<String> result = personsService.getEmailsListOfCity("city2");
 
 		// THEN
-		verify(personDAO, Mockito.times(1)).getPersonsList();
+		verify(data, Mockito.times(1)).getPersonsList();
 		List<String> emailsListResult = new ArrayList<>();
 		emailsListResult.add("email2");
 		assertEquals(emailsListResult, result);

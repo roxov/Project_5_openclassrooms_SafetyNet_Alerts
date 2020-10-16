@@ -13,9 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import fr.asterox.SafetyNet_Alerts.consumer.PersonDAO;
 import fr.asterox.SafetyNet_Alerts.integration.config.DataTestConfig;
 import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.web.PersonsController;
@@ -28,7 +28,7 @@ public class PersonsControllerIT {
 	private PersonsController personsController;
 
 	@Autowired
-	private PersonDAO personDAO;
+	private Data data;
 
 	private MedicalRecords medicalRecords;
 	private static DataTestConfig dataTestConfig = new DataTestConfig();
@@ -67,7 +67,7 @@ public class PersonsControllerIT {
 		List<Person> resultList = new ArrayList<>();
 		resultList.add(person1);
 		resultList.add(person2);
-		assertEquals(resultList, personDAO.getPersonsList());
+		assertEquals(resultList, data.getPersonsList());
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class PersonsControllerIT {
 		// THEN
 		List<Person> resultList = new ArrayList<>();
 		resultList.add(updatedPerson);
-		assertEquals(resultList, personDAO.getPersonsList());
+		assertEquals(resultList, data.getPersonsList());
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class PersonsControllerIT {
 		personsController.deletePerson("adult1", "lname1");
 
 		// THEN
-		assertEquals(null, personDAO.getPersonsList());
+		assertEquals(null, data.getPersonsList());
 	}
 
 }

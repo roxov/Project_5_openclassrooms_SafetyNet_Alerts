@@ -10,9 +10,9 @@ import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 
 public interface IMedicalRecordsService {
 
-	public void addMedicalRecords(MedicalRecords medicalRecords);
+	public void addMedicalRecords(String firstName, String lastName, String birthdate, MedicalRecords medicalRecords);
 
-	public void updateMedicalRecords(MedicalRecords medicalRecords);
+	public void updateMedicalRecords(String firstName, String lastName, MedicalRecords medicalRecords);
 
-	public void deleteMedicalRecords(MedicalRecords medicalRecords);
+	public void deleteMedicalRecords(String firstName, String lastName);
 }

@@ -17,9 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import fr.asterox.SafetyNet_Alerts.consumer.FirestationDAO;
-import fr.asterox.SafetyNet_Alerts.consumer.HouseholdDAO;
 import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
@@ -35,10 +34,7 @@ public class FirestationsServiceTest {
 	private FirestationsService firestationsService;
 
 	@MockBean
-	private FirestationDAO firestationDAO;
-
-	@MockBean
-	private HouseholdDAO householdDAO;
+	private Data data;
 
 	MedicalRecords medicalRecords;
 	Address address;
@@ -79,15 +75,15 @@ public class FirestationsServiceTest {
 		Firestation firestation = new Firestation(1, addressesList);
 		firestationsList.add(firestation);
 
-		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
-		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getFirestationsList()).thenReturn(firestationsList);
 
 		// WHEN
 		PeopleAndCountForStationDTO result = firestationsService.getInfoOnPersonsServedByStation(1);
 
 		// THEN
-		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getFirestationsList();
 		assertEquals("childname1", result.getPeopleOfStation().get(0).getFirstName());
 		assertEquals("lname1", result.getPeopleOfStation().get(0).getLastName());
 		assertEquals(address, result.getPeopleOfStation().get(0).getAddress());
@@ -111,15 +107,15 @@ public class FirestationsServiceTest {
 		Firestation firestation = new Firestation(1, addressesList);
 		firestationsList.add(firestation);
 
-		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
-		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getFirestationsList()).thenReturn(firestationsList);
 
 		// WHEN
 		List<String> result = firestationsService.getPhoneOfPersonsServedByStation(1);
 
 		// THEN
-		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getFirestationsList();
 		List<String> phonesListTest = new ArrayList<>();
 		phonesListTest.add("chPhone1");
 		phonesListTest.add("adPhone1");
@@ -148,8 +144,8 @@ public class FirestationsServiceTest {
 		Firestation firestation2 = new Firestation(2, addressesList2);
 		firestationsList.add(firestation2);
 
-		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
-		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getFirestationsList()).thenReturn(firestationsList);
 
 		List<Integer> stationNumbers = new ArrayList<>();
 		stationNumbers.add(1);
@@ -158,8 +154,8 @@ public class FirestationsServiceTest {
 		List<HouseholdDTO> result = firestationsService.getHouseholdsServedByStations(stationNumbers);
 
 		// THEN
-		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getFirestationsList();
 		assertEquals("lname1", result.get(0).getPersonsListOfHousehold().get(0).getLastName());
 		assertEquals("adPhone1", result.get(0).getPersonsListOfHousehold().get(0).getPhone());
 		assertEquals(adultAge, result.get(0).getPersonsListOfHousehold().get(0).getAge());
@@ -188,8 +184,8 @@ public class FirestationsServiceTest {
 		Firestation firestation2 = new Firestation(2, addressesList2);
 		firestationsList.add(firestation2);
 
-		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
-		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getFirestationsList()).thenReturn(firestationsList);
 
 		List<Integer> stationNumbers = new ArrayList<>();
 		stationNumbers.add(1);
@@ -199,8 +195,8 @@ public class FirestationsServiceTest {
 		List<HouseholdDTO> result = firestationsService.getHouseholdsServedByStations(stationNumbers);
 
 		// THEN
-		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getFirestationsList();
 		assertEquals("lname1", result.get(0).getPersonsListOfHousehold().get(0).getLastName());
 		assertEquals("adPhone1", result.get(0).getPersonsListOfHousehold().get(0).getPhone());
 		assertEquals(adultAge, result.get(0).getPersonsListOfHousehold().get(0).getAge());

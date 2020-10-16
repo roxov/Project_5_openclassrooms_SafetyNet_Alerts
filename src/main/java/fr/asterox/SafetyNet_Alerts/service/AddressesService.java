@@ -10,9 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.asterox.SafetyNet_Alerts.consumer.FirestationDAO;
-import fr.asterox.SafetyNet_Alerts.consumer.HouseholdDAO;
 import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.Person;
@@ -26,9 +25,7 @@ public class AddressesService implements IAddressesService {
 	private static final Logger LOGGER = LogManager.getLogger(AddressesService.class);
 
 	@Autowired
-	public HouseholdDAO householdDAO;
-	@Autowired
-	public FirestationDAO firestationDAO;
+	private Data data;
 
 	private List<Firestation> allFirestationsList;
 	private List<Household> allHouseholdsList;
@@ -36,8 +33,8 @@ public class AddressesService implements IAddressesService {
 	Map<Address, List<Person>> householdsMap;
 
 	private void getFirestationsAndHouseholdsLists() {
-		allFirestationsList = firestationDAO.getFirestationsList();
-		allHouseholdsList = householdDAO.getHouseholdsList();
+		allFirestationsList = data.getFirestationsList();
+		allHouseholdsList = data.getHouseholdsList();
 	}
 
 	@Override

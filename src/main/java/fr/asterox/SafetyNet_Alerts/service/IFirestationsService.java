@@ -47,7 +47,7 @@ public interface IFirestationsService {
 
 	public void addFirestation(Firestation firestation);
 
-	public void updateFirestation(Firestation firestation);
+	public void updateFirestation(String street, int stationNumber);
 
-	public void deleteFirestation(Firestation firestation);
+	public void deleteFirestation(int stationNumber);
 }

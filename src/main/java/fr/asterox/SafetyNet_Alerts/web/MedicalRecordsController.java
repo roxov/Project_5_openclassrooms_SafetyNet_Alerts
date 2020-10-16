@@ -26,11 +26,6 @@ public class MedicalRecordsController {
 	@Autowired
 	private MedicalRecordsService medicalRecordsService;
 
-//	● ajouter un dossier médical ;
-//	● mettre à jour un dossier médical existant (comme évoqué précédemment, supposer que le
-//	prénom et le nom de famille ne changent pas) ;
-//	● supprimer un dossier médical (utilisez une combinaison de prénom et de nom comme
-//	identificateur unique).
 	@PostMapping(value = "/medicalRecord")
 	public void addMedicalRecords(@RequestBody String firstName, String lastName, String birthdate,
 			MedicalRecords medicalRecords) {

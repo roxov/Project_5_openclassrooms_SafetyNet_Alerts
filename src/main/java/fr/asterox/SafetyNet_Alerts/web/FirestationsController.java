@@ -52,28 +52,19 @@ public class FirestationsController {
 	@PostMapping(value = "/firestation")
 	public void addFirestation(@RequestBody Firestation firestation) {
 		LOGGER.info("Adding new firestation");
-//		Firestation firestationAdded = 
 		firestationsService.addFirestation(firestation);
-//		if (firestationAdded == null) {
-//			logger.info("Adding new firestation : null Content");
-//			return ResponseEntity.noContent().build();
-//		}
 	}
 
-//	 ajout d'un mapping caserne/adresse ;
-//	 ● mettre à jour le numéro de la caserne de pompiers d'une adresse ;
-//	 ● supprimer le mapping d'une caserne ou d'une adresse.
-
 	@PutMapping(value = "/firestation")
-	public void updateStationNumber(@RequestParam String street, int stationNumber) {
+	public void updateStationNumber(@RequestParam String street, int newStationNumber) {
 		LOGGER.info("Updating firestation");
-		firestationsService.updateFirestation(firestation);
+		firestationsService.updateFirestation(street, newStationNumber);
 	}
 
 	@DeleteMapping(value = "/firestation")
 	public void deleteFirestation(@RequestParam int stationNumber) {
 		LOGGER.info("Deleting firestation");
-		firestationsService.deleteFirestation(firestation);
+		firestationsService.deleteFirestation(stationNumber);
 	}
 
 }

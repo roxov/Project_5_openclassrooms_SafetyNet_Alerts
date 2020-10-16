@@ -18,9 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import fr.asterox.SafetyNet_Alerts.consumer.FirestationDAO;
-import fr.asterox.SafetyNet_Alerts.consumer.HouseholdDAO;
 import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
@@ -36,10 +35,7 @@ public class AddressesServiceTest {
 	private AddressesService addressesService;
 
 	@MockBean
-	private HouseholdDAO householdDAO;
-
-	@MockBean
-	private FirestationDAO firestationDAO;
+	private Data data;
 
 	private MedicalRecords medicalRecords;
 	private Address address;
@@ -77,13 +73,13 @@ public class AddressesServiceTest {
 		Household household1 = new Household(address, personsList);
 		householdsList.add(household1);
 
-		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getHouseholdsList()).thenReturn(householdsList);
 
 		// WHEN
 		List<ChildDTO> result = addressesService.getPersonsLivingInChildHousehold("street");
 
 		// THEN
-		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getHouseholdsList();
 		assertEquals("childname1", result.get(0).getFirstName());
 		assertEquals("lname1", result.get(0).getLastName());
 		assertEquals(childAge, result.get(0).getAge());
@@ -100,13 +96,13 @@ public class AddressesServiceTest {
 		Household household1 = new Household(address, personsList);
 		householdsList.add(household1);
 
-		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getHouseholdsList()).thenReturn(householdsList);
 
 		// WHEN
 		List<ChildDTO> result = addressesService.getPersonsLivingInChildHousehold("street");
 
 		// THEN
-		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getHouseholdsList();
 		assertEquals(null, result);
 	}
 
@@ -128,15 +124,15 @@ public class AddressesServiceTest {
 		Firestation firestation = new Firestation(1, addressesList);
 		firestationsList.add(firestation);
 
-		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
-		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getFirestationsList()).thenReturn(firestationsList);
 
 		// WHEN
 		PeopleAndStationNumberOfAddressDTO result = addressesService.getInhabitantsAndStationOfTheAddress("street");
 
 		// THEN
-		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getFirestationsList();
 		assertEquals("lname1", result.getPeopleOfAddress().get(0).getLastName());
 		assertEquals("adPhone1", result.getPeopleOfAddress().get(0).getPhone());
 		assertEquals(adultAge, result.getPeopleOfAddress().get(0).getAge());
@@ -160,15 +156,15 @@ public class AddressesServiceTest {
 		Firestation firestation2 = new Firestation(2, addressesList2);
 		firestationsList.add(firestation2);
 
-		when(householdDAO.getHouseholdsList()).thenReturn(householdsList);
-		when(firestationDAO.getFirestationsList()).thenReturn(firestationsList);
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getFirestationsList()).thenReturn(firestationsList);
 
 		// WHEN
 		PeopleAndStationNumberOfAddressDTO result = addressesService.getInhabitantsAndStationOfTheAddress("street");
 
 		// THEN
-		verify(householdDAO, Mockito.times(1)).getHouseholdsList();
-		verify(firestationDAO, Mockito.times(1)).getFirestationsList();
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getFirestationsList();
 		assertEquals("lname1", result.getPeopleOfAddress().get(0).getLastName());
 		assertEquals("adPhone1", result.getPeopleOfAddress().get(0).getPhone());
 		assertEquals(adultAge, result.getPeopleOfAddress().get(0).getAge());

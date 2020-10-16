@@ -68,75 +68,74 @@ public class GenerateData {
 		int zip = 0;
 		String phone = null;
 		String email = null;
-
-		// for (String field = iterator.readObject(); field != null; field =
-		// iterator.readObject()) {
 		while (iterator.readArray()) {
-			String fieldSt = iterator.readString();
-			switch (fieldSt) {
-			case "firstName":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					firstName = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for firstName data");
+			for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
+
+				switch (field) {
+				case "firstName":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						firstName = iterator.readString();
+					} else {
+						LOGGER.error("Illegal type for firstName data");
+						iterator.skip();
+					}
+					break;
+				case "lastName":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						lastName = iterator.readString();
+					} else {
+						LOGGER.error("Illegal type for lastName data");
+						iterator.skip();
+					}
+					break;
+				case "address":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						street = iterator.readString();
+					} else {
+						LOGGER.error("Illegal type for address data");
+						iterator.skip();
+					}
+					break;
+				case "city":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						city = iterator.readString();
+					} else {
+						LOGGER.error("Illegal type for city data");
+						iterator.skip();
+					}
+					break;
+				case "zip":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						zip = Integer.parseInt(iterator.readString());
+					} else {
+						LOGGER.error("Illegal type for zip data");
+						iterator.skip();
+					}
+					break;
+				case "phone":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						phone = iterator.readString();
+					} else {
+						LOGGER.error("Illegal type for phone data");
+						iterator.skip();
+					}
+					break;
+				case "email":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						email = iterator.readString();
+					} else {
+						LOGGER.error("Illegal type for email data");
+						iterator.skip();
+					}
+					break;
+				default:
 					iterator.skip();
 				}
-				break;
-			case "lastName":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					lastName = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for lastName data");
-					iterator.skip();
-				}
-				break;
-			case "address":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					street = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for address data");
-					iterator.skip();
-				}
-				break;
-			case "city":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					city = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for city data");
-					iterator.skip();
-				}
-				break;
-			case "zip":
-				if (iterator.whatIsNext() == ValueType.NUMBER) {
-					zip = Integer.parseInt(iterator.readString());
-				} else {
-					LOGGER.error("Illegal type for zip data");
-					iterator.skip();
-				}
-				break;
-			case "phone":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					phone = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for phone data");
-					iterator.skip();
-				}
-				break;
-			case "email":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					email = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for email data");
-					iterator.skip();
-				}
-				break;
-			default:
-				iterator.skip();
 			}
+			Address address = new Address(street, zip, city);
+			Person person = new Person(firstName, lastName, null, address, phone, email, null);
+			personsList.add(person);
 		}
-		Address address = new Address(street, zip, city);
-		Person person = new Person(firstName, lastName, null, address, phone, email, null);
-		personsList.add(person);
 	}
 
 	public void parseFirestationsData() throws IOException {
@@ -144,42 +143,41 @@ public class GenerateData {
 		Integer stationNumber = 0;
 		Address address = null;
 
-		// for (String field = iterator.readObject(); field != null; field =
-		// iterator.readObject()) {
 		while (iterator.readArray()) {
-			String fieldSt = iterator.readString();
-			switch (fieldSt) {
-			case "address":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					street = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for address data");
-					iterator.skip();
-				}
-				break;
-			case "station":
-				if (iterator.whatIsNext() == ValueType.NUMBER) {
-					stationNumber = Integer.parseInt(iterator.readString());
-				} else {
-					LOGGER.error("Illegal type for station number data");
-					iterator.skip();
-				}
-				break;
-			default:
-				iterator.skip();
-			}
-
-			for (Person person : personsList) {
-				if (street.equals(person.getAddress().getStreet())) {
-					address = person.getAddress();
+			for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
+				switch (field) {
+				case "address":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						street = iterator.readString();
+					} else {
+						LOGGER.error("Illegal type for address data");
+						iterator.skip();
+					}
 					break;
+				case "station":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						stationNumber = Integer.parseInt(iterator.readString());
+					} else {
+						LOGGER.error("Illegal type for station number data");
+						iterator.skip();
+					}
+					break;
+				default:
+					iterator.skip();
+				}
+
+				for (Person person : personsList) {
+					if (street.equals(person.getAddress().getStreet())) {
+						address = person.getAddress();
+						break;
+					}
 				}
 			}
+			firestationsMap.put(stationNumber, firestationsMap.getOrDefault(stationNumber, new ArrayList<Address>()));
+			List<Address> currentFirestationAddressesList = firestationsMap.get(stationNumber);
+			currentFirestationAddressesList.add(address);
+			firestationsMap.put(stationNumber, currentFirestationAddressesList);
 		}
-		firestationsMap.put(stationNumber, firestationsMap.getOrDefault(stationNumber, new ArrayList<Address>()));
-		List<Address> currentFirestationAddressesList = firestationsMap.get(stationNumber);
-		currentFirestationAddressesList.add(address);
-		firestationsMap.put(stationNumber, currentFirestationAddressesList);
 	}
 
 	public void parseMedicalRecordsData() throws IOException {
@@ -189,67 +187,66 @@ public class GenerateData {
 		List<String> medicationsList = new ArrayList<>();
 		List<String> allergiesList = new ArrayList<>();
 
-		// for (String field = iterator.readObject(); field != null; field =
-		// iterator.readObject()) {
 		while (iterator.readArray()) {
-			String fieldSt = iterator.readString();
-			switch (fieldSt) {
-			case "firstName":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					firstName = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for firstName data");
-					iterator.skip();
-				}
-				break;
-			case "lastName":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					lastName = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for lastName data");
-					iterator.skip();
-				}
-				break;
-			case "birthdate":
-				if (iterator.whatIsNext() == ValueType.STRING) {
-					birthdate = iterator.readString();
-				} else {
-					LOGGER.error("Illegal type for birthdate data");
-					iterator.skip();
-				}
-				break;
-			case "medications":
-				while (iterator.readArray()) {
+			for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
+				switch (field) {
+				case "firstName":
 					if (iterator.whatIsNext() == ValueType.STRING) {
-						String medications = iterator.readString();
-						medicationsList.add(medications);
+						firstName = iterator.readString();
 					} else {
-						LOGGER.error("Illegal type for medications data");
+						LOGGER.error("Illegal type for firstName data");
 						iterator.skip();
 					}
-				}
-				break;
-			case "allergies":
-				while (iterator.readArray()) {
+					break;
+				case "lastName":
 					if (iterator.whatIsNext() == ValueType.STRING) {
-						String allergies = iterator.readString();
-						allergiesList.add(allergies);
+						lastName = iterator.readString();
 					} else {
-						LOGGER.error("Illegal type for allergies data");
+						LOGGER.error("Illegal type for lastName data");
 						iterator.skip();
 					}
+					break;
+				case "birthdate":
+					if (iterator.whatIsNext() == ValueType.STRING) {
+						birthdate = iterator.readString();
+					} else {
+						LOGGER.error("Illegal type for birthdate data");
+						iterator.skip();
+					}
+					break;
+				case "medications":
+					while (iterator.readArray()) {
+						if (iterator.whatIsNext() == ValueType.STRING) {
+							String medications = iterator.readString();
+							medicationsList.add(medications);
+						} else {
+							LOGGER.error("Illegal type for medications data");
+							iterator.skip();
+						}
+					}
+					break;
+				case "allergies":
+					while (iterator.readArray()) {
+						if (iterator.whatIsNext() == ValueType.STRING) {
+							String allergies = iterator.readString();
+							allergiesList.add(allergies);
+						} else {
+							LOGGER.error("Illegal type for allergies data");
+							iterator.skip();
+						}
+					}
+					break;
+				default:
+					iterator.skip();
 				}
-				break;
-			default:
-				iterator.skip();
 			}
-		}
 
-		for (Person person : personsList) {
-			if (person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
-				person.setBirthdate(birthdate);
-				person.setMedicalRecords(new MedicalRecords(medicationsList, allergiesList));
-				break;
+			for (Person person : personsList) {
+				if (person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
+					person.setBirthdate(birthdate);
+					person.setMedicalRecords(new MedicalRecords(medicationsList, allergiesList));
+					break;
+				}
 			}
 		}
 	}
@@ -265,32 +262,26 @@ public class GenerateData {
 			firestationsList.add(new Firestation(fEntry.getKey(), fEntry.getValue()));
 		}
 		data.setFirestationsList(firestationsList);
-
+//
+		Map<Address, List<Person>> householdsMap = new HashMap<>();
 		for (Person person : personsList) {
-			for (Household household : householdsList) {
-				if (person.getAddress().equals(household.getAddress())) {
-					int index = householdsList.indexOf(household);
-					List<Person> personsListOfFinalHousehold = household.getPersonsList();
-					personsListOfFinalHousehold.add(person);
-					household.setPersonsList(personsListOfFinalHousehold);
-					householdsList.set(index, household);
-				}
-				List<Person> personsOfHousehold = new ArrayList<>();
-				personsOfHousehold.add(person);
-				Household newHousehold = new Household(person.getAddress(), personsOfHousehold);
-				householdsList.add(newHousehold);
-			}
-		}
-//		Map<Address, List<Person>> householdsMap = new HashMap<>();
-//		householdsMap.put(person.getAddress(), householdsMap.getOrDefault(person.getAddress(), new ArrayList<Person>()));
-//		List<Person> currentHouseholdPersonsList = householdsMap.get(person.getAddress());
-//		currentHouseholdPersonsList.add(person);
-//		householdsMap.put(person.getAddress()), currentHouseholdPersonsList);
+			if (householdsMap.get(person.getAddress()) == null) {
+				List<Person> personsInHousehold = new ArrayList<>();
+				personsInHousehold.add(person);
+				householdsMap.put(person.getAddress(), personsInHousehold);
+			} else {
 
-//		Set<Entry<Address, List<Person>>> setHouseholdsEntry = householdsMap.entrySet();
-//		for (Entry<Address, List<Person>>> hEntry : setHouseholdsEntry) {
-//			householdsList.add(new Household(hEntry.getKey(), hEntry.getValue()));
-//		}
+				List<Person> personsInHousehold = householdsMap.get(person.getAddress());
+				personsInHousehold.add(person);
+				householdsMap.put(person.getAddress(), personsInHousehold);
+			}
+
+		}
+
+		Set<Entry<Address, List<Person>>> setHouseholdsEntry = householdsMap.entrySet();
+		for (Entry<Address, List<Person>> hEntry : setHouseholdsEntry) {
+			householdsList.add(new Household(hEntry.getKey(), hEntry.getValue()));
+		}
 		data.setHouseholdsList(householdsList);
 		LOGGER.debug("Generating a filled Data");
 		return data;

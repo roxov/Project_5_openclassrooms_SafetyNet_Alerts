@@ -18,7 +18,7 @@ import fr.asterox.SafetyNet_Alerts.model.Person;
 @ExtendWith(MockitoExtension.class)
 public class GenerateDataTest {
 
-	private GenerateData generateData;
+	private GenerateData generateData = new GenerateData();
 
 	@Test
 	public void givenOridinalData_whenGenerateData_thenReturnDataObjectWithThreeLists() throws IOException {

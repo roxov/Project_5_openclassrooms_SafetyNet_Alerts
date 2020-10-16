@@ -13,9 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import fr.asterox.SafetyNet_Alerts.consumer.PersonDAO;
 import fr.asterox.SafetyNet_Alerts.integration.config.DataTestConfig;
 import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.MedicalRecords;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.web.MedicalRecordsController;
@@ -28,7 +28,7 @@ public class MedicalRecordsControllerIT {
 	private MedicalRecordsController medicalRecordsController;
 
 	@Autowired
-	private PersonDAO personDAO;
+	private Data data;
 
 	private MedicalRecords newMedicalRecords;
 	private Address address1;
@@ -76,7 +76,7 @@ public class MedicalRecordsControllerIT {
 		Person person2 = new Person("fname2", "lname2", "01/01/1980", null, null, null, newMedicalRecords);
 		resultList.add(person2);
 
-		assertEquals(resultList, personDAO.getPersonsList());
+		assertEquals(resultList, data.getPersonsList());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class MedicalRecordsControllerIT {
 		Person person1 = new Person("adult1", "lname1", "03/06/1980", address1, "phone1", "email1", newMedicalRecords);
 		List<Person> resultList = new ArrayList<>();
 		resultList.add(person1);
-		assertEquals(resultList, personDAO.getPersonsList());
+		assertEquals(resultList, data.getPersonsList());
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class MedicalRecordsControllerIT {
 		Person person1 = new Person("adult1", "lname1", "03/06/1980", address1, "phone1", "email1", null);
 		List<Person> resultList = new ArrayList<>();
 		resultList.add(person1);
-		assertEquals(resultList, personDAO.getPersonsList());
+		assertEquals(resultList, data.getPersonsList());
 	}
 
 }

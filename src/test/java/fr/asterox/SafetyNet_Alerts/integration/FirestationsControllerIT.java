@@ -13,9 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import fr.asterox.SafetyNet_Alerts.consumer.FirestationDAO;
 import fr.asterox.SafetyNet_Alerts.integration.config.DataTestConfig;
 import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.web.FirestationsController;
 
@@ -27,7 +27,7 @@ public class FirestationsControllerIT {
 	private FirestationsController firestationsController;
 
 	@Autowired
-	private FirestationDAO firestationDAO;
+	private Data data;
 
 	private static DataTestConfig dataTestConfig = new DataTestConfig();
 
@@ -62,7 +62,7 @@ public class FirestationsControllerIT {
 		addressesList1.add(address1);
 		resultList.add(new Firestation(1, addressesList1));
 		resultList.add(firestation2);
-		assertEquals(resultList, firestationDAO.getFirestationsList());
+		assertEquals(resultList, data.getFirestationsList());
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class FirestationsControllerIT {
 		List<Address> addressesList1 = new ArrayList<>();
 		addressesList1.add(address1);
 		resultList.add(new Firestation(2, addressesList1));
-		assertEquals(resultList, firestationDAO.getFirestationsList());
+		assertEquals(resultList, data.getFirestationsList());
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class FirestationsControllerIT {
 		firestationsController.deleteFirestation(1);
 
 		// THEN
-		assertEquals(null, firestationDAO.getFirestationsList());
+		assertEquals(null, data.getFirestationsList());
 	}
 
 }

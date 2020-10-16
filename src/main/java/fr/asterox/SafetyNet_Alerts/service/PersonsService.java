@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.asterox.SafetyNet_Alerts.consumer.PersonDAO;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Person;
 import fr.asterox.SafetyNet_Alerts.technical.ManipulateDate;
 import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
@@ -20,20 +20,20 @@ public class PersonsService implements IPersonsService {
 	private static final Logger LOGGER = LogManager.getLogger(PersonsService.class);
 
 	@Autowired
-	private PersonDAO personDAO;
+	private Data data;
 
 	private List<Person> allPersonsList;
-	private Map<String, Person> PersonsIdentifiedByNames;
+	private Map<String, Person> PersonsIdentifiedByNamesMap;
 
 	private void getPersonsList() {
-		allPersonsList = personDAO.getPersonsList();
+		allPersonsList = data.getPersonsList();
 	}
 
 	private void getPersonsMap() {
 		getPersonsList();
 		for (Person person : allPersonsList) {
 			String key = person.getFirstName() + person.getLastName();
-			PersonsIdentifiedByNames.put(key, person);
+			PersonsIdentifiedByNamesMap.put(key, person);
 		}
 	}
 
@@ -78,7 +78,7 @@ public class PersonsService implements IPersonsService {
 	public void updatePerson(Person person) {
 		getPersonsMap();
 		String personToUpdate = person.getFirstName() + person.getLastName();
-		int index = allPersonsList.indexOf(PersonsIdentifiedByNames.get(personToUpdate));
+		int index = allPersonsList.indexOf(PersonsIdentifiedByNamesMap.get(personToUpdate));
 		allPersonsList.set(index, person);
 		LOGGER.info("Updating a person");
 
@@ -89,7 +89,7 @@ public class PersonsService implements IPersonsService {
 		// TODO : null
 		getPersonsMap();
 		String personToDelete = firstName + lastName;
-		int index = allPersonsList.indexOf(PersonsIdentifiedByNames.get(personToDelete));
+		int index = allPersonsList.indexOf(PersonsIdentifiedByNamesMap.get(personToDelete));
 		allPersonsList.remove(index);
 		LOGGER.info("Deleting a person");
 

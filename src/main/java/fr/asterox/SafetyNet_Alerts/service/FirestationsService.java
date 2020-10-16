@@ -11,9 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.asterox.SafetyNet_Alerts.consumer.FirestationDAO;
-import fr.asterox.SafetyNet_Alerts.consumer.HouseholdDAO;
 import fr.asterox.SafetyNet_Alerts.model.Address;
+import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.Person;
@@ -28,9 +27,7 @@ public class FirestationsService implements IFirestationsService {
 	private static final Logger LOGGER = LogManager.getLogger(FirestationsService.class);
 
 	@Autowired
-	public FirestationDAO firestationDAO;
-	@Autowired
-	public HouseholdDAO householdDAO;
+	private Data data;
 
 	private List<Firestation> allFirestationsList;
 	private List<Household> allHouseholdsList;
@@ -38,13 +35,13 @@ public class FirestationsService implements IFirestationsService {
 	Map<Address, List<Person>> householdsMap;
 
 	private void getFirestationsAndHouseholdsMaps() {
-		allFirestationsList = firestationDAO.getFirestationsList();
+		allFirestationsList = data.getFirestationsList();
 		firestationsMap = new HashMap<>();
 		for (Firestation firestation : allFirestationsList) {
 			firestationsMap.put(firestation.getStationNumber(), firestation.getAdressesList());
 		}
 
-		allHouseholdsList = householdDAO.getHouseholdsList();
+		allHouseholdsList = data.getHouseholdsList();
 		householdsMap = new HashMap<>();
 		for (Household household : allHouseholdsList) {
 			householdsMap.put(household.getAddress(), household.getPersonsList());
@@ -128,19 +125,36 @@ public class FirestationsService implements IFirestationsService {
 
 	@Override
 	public void addFirestation(Firestation firestation) {
+		getFirestationsAndHouseholdsMaps();
+		allFirestationsList.add(firestation);
 		LOGGER.info("Adding a firestation");
-		firestationDAO.addFirestation(firestation);
 	}
 
 	@Override
-	public void updateFirestation(Firestation firestation) {
+	public void updateFirestation(String street, int newStationNumber) {
+		getFirestationsAndHouseholdsMaps();
+		for (Firestation firestation : allFirestationsList) {
+			List<Address> firestationAddressesList = firestation.getAdressesList();
+			for (Address address : firestationAddressesList) {
+				if (street.equals(address.getStreet())) {
+					firestation.setStationNumber(newStationNumber);
+					break;
+				}
+			}
+		}
 		LOGGER.info("Updating a firestation");
-		firestationDAO.updateFirestation(firestation);
 	}
 
 	@Override
-	public void deleteFirestation(Firestation firestation) {
+	public void deleteFirestation(int stationNumber) {
+		getFirestationsAndHouseholdsMaps();
+		for (Firestation firestation : allFirestationsList) {
+			if (stationNumber == firestation.getStationNumber()) {
+				int index = allFirestationsList.indexOf(firestation);
+				allFirestationsList.remove(index);
+				break;
+			}
+		}
 		LOGGER.info("Deleting a firestation");
-		firestationDAO.deleteFirestation(firestation);
 	}
 }
