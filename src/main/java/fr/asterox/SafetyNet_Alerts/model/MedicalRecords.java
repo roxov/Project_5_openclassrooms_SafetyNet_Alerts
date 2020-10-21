@@ -12,6 +12,37 @@ public class MedicalRecords {
 		this.allergies = allergies;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((allergies == null) ? 0 : allergies.hashCode());
+		result = prime * result + ((medications == null) ? 0 : medications.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MedicalRecords other = (MedicalRecords) obj;
+		if (allergies == null) {
+			if (other.allergies != null)
+				return false;
+		} else if (!allergies.equals(other.allergies))
+			return false;
+		if (medications == null) {
+			if (other.medications != null)
+				return false;
+		} else if (!medications.equals(other.medications))
+			return false;
+		return true;
+	}
+
 	public List<String> getMedications() {
 		return medications;
 	}

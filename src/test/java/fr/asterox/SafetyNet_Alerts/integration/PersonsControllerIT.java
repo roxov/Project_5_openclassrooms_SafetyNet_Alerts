@@ -93,7 +93,8 @@ public class PersonsControllerIT {
 		personsController.deletePerson("adult1", "lname1");
 
 		// THEN
-		assertEquals(null, data.getPersonsList());
+		List<Person> resultList = new ArrayList<>();
+		assertEquals(resultList, data.getPersonsList());
 	}
 
 }

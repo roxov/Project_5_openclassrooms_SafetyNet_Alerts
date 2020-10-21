@@ -83,7 +83,7 @@ public class FirestationsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getHouseholdsList();
-		verify(data, Mockito.times(1)).getFirestationsList();
+		verify(data, Mockito.times(2)).getFirestationsList();
 		assertEquals("childname1", result.getPeopleOfStation().get(0).getFirstName());
 		assertEquals("lname1", result.getPeopleOfStation().get(0).getLastName());
 		assertEquals(address, result.getPeopleOfStation().get(0).getAddress());
@@ -94,6 +94,23 @@ public class FirestationsServiceTest {
 		assertEquals("adPhone1", result.getPeopleOfStation().get(1).getPhone());
 		assertEquals(1, result.getNumberOfAdults());
 		assertEquals(1, result.getNumberOfChildren());
+	}
+
+	@Test
+	public void givenOneFirestation_whenGetInfoOnPersonsServedByInexistentStation_thenReturnEmptyList() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation = new Firestation(1, addressesList);
+		firestationsList.add(firestation);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		PeopleAndCountForStationDTO result = firestationsService.getInfoOnPersonsServedByStation(2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getFirestationsList();
+		assertEquals(null, result);
 	}
 
 	@Test
@@ -115,12 +132,29 @@ public class FirestationsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getHouseholdsList();
-		verify(data, Mockito.times(1)).getFirestationsList();
+		verify(data, Mockito.times(2)).getFirestationsList();
 		List<String> phonesListTest = new ArrayList<>();
 		phonesListTest.add("chPhone1");
 		phonesListTest.add("adPhone1");
 		assertEquals(phonesListTest, result);
 
+	}
+
+	@Test
+	public void givenOneFirestation_whenGetPhonesForInexistentStation_thenReturnEmptyList() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation = new Firestation(1, addressesList);
+		firestationsList.add(firestation);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		List<String> result = firestationsService.getPhoneOfPersonsServedByStation(2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getFirestationsList();
+		assertEquals(null, result);
 	}
 
 	@Test
@@ -206,5 +240,210 @@ public class FirestationsServiceTest {
 		assertEquals(adultAge, result.get(1).getPersonsListOfHousehold().get(0).getAge());
 		assertEquals(medicalRecords, result.get(1).getPersonsListOfHousehold().get(0).getMedicalRecords());
 	}
+
+	@Test
+	public void givenOneFirestation_whenGetHouseholdForInexistentStation_thenReturnEmptyList() {
+		// GIVEN
+		personsList.add(adult1);
+		Household household1 = new Household(address, personsList);
+		householdsList.add(household1);
+
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
+		firestationsList.add(firestation1);
+
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		List<Integer> stationNumbers = new ArrayList<>();
+		stationNumbers.add(2);
+
+		// WHEN
+		List<HouseholdDTO> result = firestationsService.getHouseholdsServedByStations(stationNumbers);
+
+		// THEN
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		verify(data, Mockito.times(1)).getFirestationsList();
+		assertEquals(null, result);
+	}
+
+	@Test
+	public void givenListOfOneFirestation_whenAddFirestation_thenReturnListOfTwoFirestations() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
+		firestationsList.add(firestation1);
+
+		Address address2 = new Address("street2", 123, "city2");
+		List<Address> addressesList2 = new ArrayList<>();
+		addressesList2.add(address2);
+		Firestation firestation2 = new Firestation(2, addressesList2);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		firestationsService.addFirestation(firestation2);
+
+		// THEN
+		verify(data, Mockito.times(2)).getFirestationsList();
+		firestationsList.add(firestation2);
+		assertEquals(firestationsList, data.getFirestationsList());
+	}
+
+	@Test
+	public void givenListOfOneFirestation_whenAddFirestationWithExistentNumber_thenReturnSameList() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
+		firestationsList.add(firestation1);
+
+		Address address2 = new Address("street2", 123, "city2");
+		List<Address> addressesList2 = new ArrayList<>();
+		addressesList2.add(address2);
+		Firestation firestation2 = new Firestation(1, addressesList2);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		firestationsService.addFirestation(firestation2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getFirestationsList();
+		assertEquals(firestationsList, data.getFirestationsList());
+	}
+
+	@Test
+	public void givenListOfOneFirestation_whenAddFirestationWithNoAddress_thenReturnSameList() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
+		firestationsList.add(firestation1);
+
+		Firestation firestation2 = new Firestation(2, null);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		firestationsService.addFirestation(firestation2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getFirestationsList();
+		assertEquals(firestationsList, data.getFirestationsList());
+	}
+
+	@Test
+	public void givenListOfOneFirestation_whenUpdateFirestation_thenReturnListOfActualizedFirestation() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
+		firestationsList.add(firestation1);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		firestationsService.updateFirestation("street", 2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getFirestationsList();
+		assertEquals("street", data.getFirestationsList().get(0).getAdressesList().get(0).getStreet());
+		assertEquals(2, data.getFirestationsList().get(0).getStationNumber());
+
+	}
+
+	@Test
+	public void givenListOfOneFirestation_whenUpdateFirestationWithNoStreet_thenReturnSameList() {
+		// WHEN
+		firestationsService.updateFirestation(null, 2);
+
+		// THEN
+		assertEquals(firestationsList, data.getFirestationsList());
+	}
+
+	@Test
+	public void givenListOfOneFirestation_whenUpdateFirestationWithInexistentStreet_thenReturnSameList() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
+		firestationsList.add(firestation1);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		firestationsService.updateFirestation("street2", 2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getFirestationsList();
+		assertEquals(firestationsList, data.getFirestationsList());
+	}
+
+	@Test
+	public void givenListOfOneFirestation_whenDeleteFirestation_thenReturnEmptyList() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
+		firestationsList.add(firestation1);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		firestationsService.deleteFirestation(1);
+
+		// THEN
+		verify(data, Mockito.times(2)).getFirestationsList();
+		List<Firestation> resultList = new ArrayList<>();
+		assertEquals(resultList, data.getFirestationsList());
+	}
+
+	@Test
+	public void givenListOfOneFirestation_whenDeleteFirestationWithInexistentNumber_thenReturnSameList() {
+		// GIVEN
+		addressesList.add(address);
+		Firestation firestation1 = new Firestation(1, addressesList);
+		firestationsList.add(firestation1);
+
+		when(data.getFirestationsList()).thenReturn(firestationsList);
+
+		// WHEN
+		firestationsService.deleteFirestation(2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getFirestationsList();
+		assertEquals(firestationsList, data.getFirestationsList());
+	}
+
+//	@Test
+//	public void givenListOfOneFirestationWithOneAddress_whenDeleteAddress_thenReturnEmptyAddressesList() {
+//		// GIVEN
+//		addressesList.add(address);
+//		Firestation firestation1 = new Firestation(1, addressesList);
+//		firestationsList.add(firestation1);
+//
+//		when(data.getFirestationsList()).thenReturn(firestationsList);
+//
+//		// WHEN
+//		firestationsService.deleteAddressFromFirestation("street");
+//
+//		// THEN
+//		verify(data, Mockito.times(2)).getFirestationsList();
+//		// List<Firestation> resultList = new ArrayList<>();
+//		assertEquals(null, data.getFirestationsList().get(0).getAdressesList());
+//	}
+//
+//	@Test
+//	public void givenListOfOneFirestationWithOneAddress_whenDeleteInexistentAddress_thenReturnSameAddressesList() {
+//		// GIVEN
+//		addressesList.add(address);
+//		Firestation firestation1 = new Firestation(1, addressesList);
+//		firestationsList.add(firestation1);
+//
+//		when(data.getFirestationsList()).thenReturn(firestationsList);
+//
+//		// WHEN
+//		firestationsService.deleteAddressFromFirestation("street2");
+//
+//		// THEN
+//		verify(data, Mockito.times(2)).getFirestationsList();
+//		assertEquals(firestationsList, data.getFirestationsList());
+//	}
 
 }

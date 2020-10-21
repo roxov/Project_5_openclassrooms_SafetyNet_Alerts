@@ -90,7 +90,7 @@ public class AddressesServiceTest {
 	}
 
 	@Test
-	public void givenNoChildInHousehold_whenGetPersonsLivingInChildHousehold_thenReturnEmptyObject() {
+	public void givenNoChildInHousehold_whenGetPersonsLivingInChildHousehold_thenReturnEmptyList() {
 		// GIVEN
 		personsList.add(adult1);
 		Household household1 = new Household(address, personsList);
@@ -100,6 +100,33 @@ public class AddressesServiceTest {
 
 		// WHEN
 		List<ChildDTO> result = addressesService.getPersonsLivingInChildHousehold("street");
+
+		// THEN
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		assertEquals(null, result);
+	}
+
+	@Test
+	public void givenMissingInformation_whenGetPersonsLivingInChildHousehold_thenReturnEmptyList() {
+		// WHEN
+		List<ChildDTO> result = addressesService.getPersonsLivingInChildHousehold(null);
+
+		// THEN
+		assertEquals(null, result);
+	}
+
+	@Test
+	public void givenAChildAndAnAdultInHousehold_whenGetPersonsLivingInChildHouseholdInInexistentStreet_thenReturnEmptyList() {
+		// GIVEN
+		personsList.add(child1);
+		personsList.add(adult1);
+		Household household1 = new Household(address, personsList);
+		householdsList.add(household1);
+
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+
+		// WHEN
+		List<ChildDTO> result = addressesService.getPersonsLivingInChildHousehold("street2");
 
 		// THEN
 		verify(data, Mockito.times(1)).getHouseholdsList();
@@ -171,4 +198,31 @@ public class AddressesServiceTest {
 		assertEquals(medicalRecords, result.getPeopleOfAddress().get(0).getMedicalRecords());
 		assertEquals(1, result.getStationNumber());
 	}
+
+	@Test
+	public void givenAHousehold_whenGetInhabitantsAndStationOfAddressWithInexistentStreet_thenReturnTheCorrespondingStationNumber() {
+		// GIVEN
+		personsList.add(adult1);
+		Household household = new Household(address, personsList);
+		householdsList.add(household);
+
+		when(data.getHouseholdsList()).thenReturn(householdsList);
+
+		// WHEN
+		PeopleAndStationNumberOfAddressDTO result = addressesService.getInhabitantsAndStationOfTheAddress("street2");
+
+		// THEN
+		verify(data, Mockito.times(1)).getHouseholdsList();
+		assertEquals(null, result);
+	}
+
+	@Test
+	public void givenMissingInformation_whenGetInhabitantsAndStationOfAddress_thenReturnNull() {
+		// WHEN
+		PeopleAndStationNumberOfAddressDTO result = addressesService.getInhabitantsAndStationOfTheAddress(null);
+
+		// THEN
+		assertEquals(null, result);
+	}
+
 }

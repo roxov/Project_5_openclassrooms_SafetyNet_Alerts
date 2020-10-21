@@ -3,7 +3,6 @@ package fr.asterox.SafetyNet_Alerts.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,25 +21,20 @@ public class PersonsService implements IPersonsService {
 	@Autowired
 	private Data data;
 
-	private List<Person> allPersonsList;
-	private Map<String, Person> PersonsIdentifiedByNamesMap;
-
-	private void getPersonsList() {
-		allPersonsList = data.getPersonsList();
-	}
-
-	private void getPersonsMap() {
-		getPersonsList();
-		for (Person person : allPersonsList) {
-			String key = person.getFirstName() + person.getLastName();
-			PersonsIdentifiedByNamesMap.put(key, person);
-		}
+	private List<Person> getPersonsList() {
+		return data.getPersonsList();
 	}
 
 	@Override
 	public List<PersonInfoDTO> getInhabitantsInfo(String firstName, String lastName) {
-		getPersonsList();
+		if (firstName == null || lastName == null) {
+			LOGGER.error("Impossible to get information : empty first name or last name");
+			return null;
+		}
+
+		List<Person> allPersonsList = getPersonsList();
 		List<PersonInfoDTO> personsSelectedByLastNameList = new ArrayList<>();
+
 		for (Person person : allPersonsList) {
 			if (person.getLastName().equals(lastName)) {
 				LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
@@ -48,15 +42,18 @@ public class PersonsService implements IPersonsService {
 				PersonInfoDTO personInfoDTO = new PersonInfoDTO(person.getLastName(), person.getAddress(), age,
 						person.getEmail(), person.getMedicalRecords());
 				personsSelectedByLastNameList.add(personInfoDTO);
+				LOGGER.info("Response to Person Info : Getting info of the person");
 			}
+
+			LOGGER.error("Impossible to get information : no match found");
+
 		}
-		LOGGER.info("Response to Person Info : Getting info of the person");
 		return personsSelectedByLastNameList;
 	}
 
 	@Override
 	public List<String> getEmailsListOfCity(String city) {
-		getPersonsList();
+		List<Person> allPersonsList = getPersonsList();
 		List<String> emailsListOfTheCity = new ArrayList<>();
 		for (Person person : allPersonsList) {
 			if (person.getAddress().getCity().equals(city)) {
@@ -69,29 +66,59 @@ public class PersonsService implements IPersonsService {
 
 	@Override
 	public void addPerson(Person person) {
-		getPersonsList();
-		allPersonsList.add(person);
-		LOGGER.info("Adding a person");
+		List<Person> allPersonsList = getPersonsList();
+
+		if (person.getFirstName() == null || person.getLastName() == null || person.getBirthdate() == null
+				|| person.getAddress() == null || person.getEmail() == null || person.getPhone() == null) {
+			LOGGER.error("Impossible to add person : missing fields");
+		} else {
+			allPersonsList.add(person);
+			data.setPersonsList(allPersonsList);
+			LOGGER.info("Adding a person");
+		}
 	}
 
 	@Override
 	public void updatePerson(Person person) {
-		getPersonsMap();
-		String personToUpdate = person.getFirstName() + person.getLastName();
-		int index = allPersonsList.indexOf(PersonsIdentifiedByNamesMap.get(personToUpdate));
-		allPersonsList.set(index, person);
-		LOGGER.info("Updating a person");
+		List<Person> allPersonsList = getPersonsList();
 
+		if (person.getFirstName() == null || person.getLastName() == null || person.getBirthdate() == null
+				|| person.getAddress() == null || person.getEmail() == null || person.getPhone() == null) {
+			LOGGER.error("Impossible to update person : missing fields");
+		} else {
+			for (Person personInList : allPersonsList) {
+				if (person.getFirstName().equals(personInList.getFirstName())
+						&& person.getLastName().equals(personInList.getLastName())) {
+					int index = allPersonsList.indexOf(personInList);
+					allPersonsList.set(index, person);
+					data.setPersonsList(allPersonsList);
+					LOGGER.info("Updating a person");
+					break;
+				} else {
+					LOGGER.error("Impossible to update person : no match found");
+				}
+			}
+		}
 	}
 
 	@Override
 	public void deletePerson(String firstName, String lastName) {
-		// TODO : null
-		getPersonsMap();
-		String personToDelete = firstName + lastName;
-		int index = allPersonsList.indexOf(PersonsIdentifiedByNamesMap.get(personToDelete));
-		allPersonsList.remove(index);
-		LOGGER.info("Deleting a person");
+		List<Person> allPersonsList = getPersonsList();
 
+		if (firstName == null || lastName == null) {
+			LOGGER.error("Impossible to delete person : empty first name or last name");
+		} else {
+			for (Person personInList : allPersonsList) {
+				if (firstName.equals(personInList.getFirstName()) && lastName.equals(personInList.getLastName())) {
+					int index = allPersonsList.indexOf(personInList);
+					allPersonsList.remove(index);
+					data.setPersonsList(allPersonsList);
+					LOGGER.info("Deleting a person");
+					break;
+				} else {
+					LOGGER.error("Impossible to delete person : no match found");
+				}
+			}
+		}
 	}
 }

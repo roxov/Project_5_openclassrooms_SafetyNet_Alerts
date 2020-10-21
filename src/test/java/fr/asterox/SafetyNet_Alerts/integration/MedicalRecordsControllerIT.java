@@ -58,7 +58,7 @@ public class MedicalRecordsControllerIT {
 	@Test
 	public void givenListOfOnePerson_whenAddMedicalRecordsToNonExistentPerson_thenReturnTheListWithNewPersonWithMedicalRecords() {
 		// WHEN
-		medicalRecordsController.addMedicalRecords("fname2", "lname2", "01/01/1980", newMedicalRecords);
+		medicalRecordsController.addMedicalRecords("fname2", "lname2", newMedicalRecords);
 
 		// THEN
 		List<String> medications = new ArrayList<>();

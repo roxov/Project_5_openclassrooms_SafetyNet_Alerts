@@ -3,7 +3,6 @@ package fr.asterox.SafetyNet_Alerts.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,14 +26,12 @@ public class AddressesService implements IAddressesService {
 	@Autowired
 	private Data data;
 
-	private List<Firestation> allFirestationsList;
-	private List<Household> allHouseholdsList;
-	Map<Integer, List<Address>> firestationsMap;
-	Map<Address, List<Person>> householdsMap;
+	private List<Firestation> getFirestationsList() {
+		return data.getFirestationsList();
+	}
 
-	private void getFirestationsAndHouseholdsLists() {
-		allFirestationsList = data.getFirestationsList();
-		allHouseholdsList = data.getHouseholdsList();
+	private List<Household> getHouseholdsList() {
+		return data.getHouseholdsList();
 	}
 
 	@Override
@@ -43,7 +40,12 @@ public class AddressesService implements IAddressesService {
 		List<ChildDTO> childrenInHousehold = new ArrayList<>();
 		List<ChildDTO> adultsInHousehold = new ArrayList<>();
 
-		getFirestationsAndHouseholdsLists();
+		if (street == null) {
+			LOGGER.error("Impossible to get information : empty street");
+			return null;
+		}
+
+		List<Household> allHouseholdsList = getHouseholdsList();
 
 		for (Household household : allHouseholdsList) {
 			if (household.getAddress().getStreet().equals(street)) {
@@ -61,6 +63,9 @@ public class AddressesService implements IAddressesService {
 					}
 				}
 				break;
+			} else {
+				LOGGER.error("Impossible to get information : no match found");
+				return null;
 			}
 		}
 		if (childrenInHousehold.isEmpty()) {
@@ -81,7 +86,12 @@ public class AddressesService implements IAddressesService {
 		Integer stationNumber = null;
 		List<FireAndFloodPersonDTO> inhabitantsDTOList = new ArrayList<>();
 
-		getFirestationsAndHouseholdsLists();
+		if (street == null) {
+			LOGGER.error("Impossible to get information : empty street");
+			return null;
+		}
+
+		List<Household> allHouseholdsList = getHouseholdsList();
 
 		for (Household household : allHouseholdsList) {
 			if (household.getAddress().getStreet().equals(street)) {
@@ -93,10 +103,14 @@ public class AddressesService implements IAddressesService {
 							person.getPhone(), age, person.getMedicalRecords());
 					inhabitantsDTOList.add(FirePersonDTO);
 				}
+				break;
+			} else {
+				LOGGER.error("Impossible to get information : no match found");
+				return null;
 			}
-			break;
 		}
 
+		List<Firestation> allFirestationsList = getFirestationsList();
 		for (Firestation firestation : allFirestationsList) {
 			List<Address> addressesListOfStation = firestation.getAdressesList();
 			for (Address address : addressesListOfStation) {

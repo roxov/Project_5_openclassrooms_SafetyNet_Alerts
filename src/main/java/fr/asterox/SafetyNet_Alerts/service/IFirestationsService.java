@@ -50,4 +50,6 @@ public interface IFirestationsService {
 	public void updateFirestation(String street, int stationNumber);
 
 	public void deleteFirestation(int stationNumber);
+
+//	public void deleteAddressFromFirestation(String street);
 }

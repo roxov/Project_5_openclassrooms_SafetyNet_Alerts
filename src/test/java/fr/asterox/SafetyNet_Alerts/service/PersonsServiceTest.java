@@ -95,6 +95,29 @@ public class PersonsServiceTest {
 	}
 
 	@Test
+	public void givenMissingInformation_whenGetInhabitantsInfo_thenReturnEmptyList() {
+		// WHEN
+		List<PersonInfoDTO> result = personsService.getInhabitantsInfo(null, "lname1");
+
+		// THEN
+		assertEquals(null, result);
+	}
+
+	@Test
+	public void givenAListOfOnePerson_whenGetInhabitantsInfoWithNoExistentPerson_thenReturnEmptyList() {
+		// GIVEN
+		when(data.getPersonsList()).thenReturn(personsList);
+
+		// WHEN
+		List<PersonInfoDTO> result = personsService.getInhabitantsInfo("fname", "lname");
+
+		// THEN
+		verify(data, Mockito.times(1)).getPersonsList();
+		List<PersonInfoDTO> emptyList = new ArrayList<>();
+		assertEquals(emptyList, result);
+	}
+
+	@Test
 	public void givenListOfTwoPersonsFromDifferentCities_whenGetEmailsListOfCity_thenReturnEmailOfOnePerson() {
 		// GIVEN
 		Address address2 = new Address("street", 123, "city2");
@@ -110,6 +133,109 @@ public class PersonsServiceTest {
 		List<String> emailsListResult = new ArrayList<>();
 		emailsListResult.add("email2");
 		assertEquals(emailsListResult, result);
+	}
+
+	@Test
+	public void givenListOfOnePerson_whenAddPerson_thenReturnListOfTwoPersons() {
+		// GIVEN
+		Address address2 = new Address("street", 123, "city2");
+		Person person2 = new Person("fname2", "lname2", "01/01/1980", address2, "phone2", "email2", medicalRecords);
+		when(data.getPersonsList()).thenReturn(personsList);
+
+		// WHEN
+		personsService.addPerson(person2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getPersonsList();
+		personsList.add(person2);
+		assertEquals(personsList, data.getPersonsList());
+	}
+
+	@Test
+	public void givenListOfOnePerson_whenAddPersonWithMissingField_thenReturnSameList() {
+		// GIVEN
+		Address address2 = new Address("street", 123, "city2");
+		Person person2 = new Person("fname2", "lname2", null, address2, "phone2", "email2", medicalRecords);
+		when(data.getPersonsList()).thenReturn(personsList);
+
+		// WHEN
+		personsService.addPerson(person2);
+
+		// THEN
+		verify(data, Mockito.times(1)).getPersonsList();
+		assertEquals(personsList, data.getPersonsList());
+	}
+
+	@Test
+	public void givenListOfOnePerson_whenUpdatePerson_thenReturnActualizedList() {
+		// GIVEN
+		Person updatedPerson = new Person("fname1", "lname1", "01/01/1980", address, "phone2", "email2",
+				medicalRecords);
+		when(data.getPersonsList()).thenReturn(personsList);
+
+		// WHEN
+		personsService.updatePerson(updatedPerson);
+
+		// THEN
+		verify(data, Mockito.times(1)).getPersonsList();
+		List<Person> resultList = new ArrayList<>();
+		resultList.add(updatedPerson);
+		assertEquals(resultList, data.getPersonsList());
+	}
+
+	@Test
+	public void givenListOfOnePerson_whenUpdateInexistentPerson_thenReturnSameList() {
+		// GIVEN
+		Person updatedPerson = new Person("fname2", "lname1", "01/01/1980", address, "phone2", "email2",
+				medicalRecords);
+		when(data.getPersonsList()).thenReturn(personsList);
+
+		// WHEN
+		personsService.updatePerson(updatedPerson);
+
+		// THEN
+		verify(data, Mockito.times(1)).getPersonsList();
+		assertEquals(personsList, data.getPersonsList());
+	}
+
+	@Test
+	public void givenListOfOnePerson_whenDeleteThePerson_thenReturnAnEmptyList() {
+		// GIVEN
+		when(data.getPersonsList()).thenReturn(personsList);
+
+		// WHEN
+		personsService.deletePerson("fname1", "lname1");
+
+		// THEN
+		verify(data, Mockito.times(1)).getPersonsList();
+		List<Person> resultList = new ArrayList<>();
+		assertEquals(resultList, data.getPersonsList());
+	}
+
+	@Test
+	public void givenListOfOnePerson_whenDeleteNullPerson_thenReturnSameList() {
+		// GIVEN
+		when(data.getPersonsList()).thenReturn(personsList);
+
+		// WHEN
+		personsService.deletePerson(null, "lname1");
+
+		// THEN
+		verify(data, Mockito.times(1)).getPersonsList();
+		assertEquals(personsList, data.getPersonsList());
+	}
+
+	@Test
+	public void givenListOfOnePerson_whenDeleteInexistentPerson_thenReturnSameList() {
+		// GIVEN
+		when(data.getPersonsList()).thenReturn(personsList);
+
+		// WHEN
+		personsService.deletePerson("fname2", "lname1");
+
+		// THEN
+		verify(data, Mockito.times(1)).getPersonsList();
+		assertEquals(personsList, data.getPersonsList());
 	}
 
 }

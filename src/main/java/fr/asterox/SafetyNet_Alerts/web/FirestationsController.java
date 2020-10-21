@@ -67,4 +67,10 @@ public class FirestationsController {
 		firestationsService.deleteFirestation(stationNumber);
 	}
 
+//	@DeleteMapping(value = "/firestation")
+//	public void deleteAddressFromFirestation(@RequestBody String street) {
+//		LOGGER.info("Deleting firestation");
+//		firestationsService.deleteAddressFromFirestation(street);
+//	}
+
 }

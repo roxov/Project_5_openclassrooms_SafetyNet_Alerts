@@ -262,7 +262,7 @@ public class GenerateData {
 			firestationsList.add(new Firestation(fEntry.getKey(), fEntry.getValue()));
 		}
 		data.setFirestationsList(firestationsList);
-//
+
 		Map<Address, List<Person>> householdsMap = new HashMap<>();
 		for (Person person : personsList) {
 			if (householdsMap.get(person.getAddress()) == null) {

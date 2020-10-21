@@ -27,10 +27,9 @@ public class MedicalRecordsController {
 	private MedicalRecordsService medicalRecordsService;
 
 	@PostMapping(value = "/medicalRecord")
-	public void addMedicalRecords(@RequestBody String firstName, String lastName, String birthdate,
-			MedicalRecords medicalRecords) {
+	public void addMedicalRecords(@RequestBody String firstName, String lastName, MedicalRecords medicalRecords) {
 		LOGGER.info("Adding new Medical Records");
-		medicalRecordsService.addMedicalRecords(firstName, lastName, birthdate, medicalRecords);
+		medicalRecordsService.addMedicalRecords(firstName, lastName, medicalRecords);
 	}
 
 	@PutMapping(value = "/medicalRecord")

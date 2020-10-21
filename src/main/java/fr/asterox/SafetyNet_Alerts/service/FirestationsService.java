@@ -29,28 +29,33 @@ public class FirestationsService implements IFirestationsService {
 	@Autowired
 	private Data data;
 
-	private List<Firestation> allFirestationsList;
-	private List<Household> allHouseholdsList;
-	Map<Integer, List<Address>> firestationsMap;
-	Map<Address, List<Person>> householdsMap;
+	private List<Firestation> getFirestationsList() {
+		return data.getFirestationsList();
+	}
 
-	private void getFirestationsAndHouseholdsMaps() {
-		allFirestationsList = data.getFirestationsList();
-		firestationsMap = new HashMap<>();
+	private Map<Integer, List<Address>> getFirestationsMap() {
+		List<Firestation> allFirestationsList = getFirestationsList();
+		Map<Integer, List<Address>> firestationsMap = new HashMap<>();
 		for (Firestation firestation : allFirestationsList) {
 			firestationsMap.put(firestation.getStationNumber(), firestation.getAdressesList());
 		}
+		return firestationsMap;
+	}
 
-		allHouseholdsList = data.getHouseholdsList();
-		householdsMap = new HashMap<>();
+	private Map<Address, List<Person>> getHouseholdsMap() {
+		List<Household> allHouseholdsList = data.getHouseholdsList();
+		Map<Address, List<Person>> householdsMap = new HashMap<>();
 		for (Household household : allHouseholdsList) {
 			householdsMap.put(household.getAddress(), household.getPersonsList());
 		}
+		return householdsMap;
 	}
 
 	private List<Person> getPersonsServedByStation(int stationNumber) {
-		getFirestationsAndHouseholdsMaps();
+		Map<Address, List<Person>> householdsMap = getHouseholdsMap();
+		Map<Integer, List<Address>> firestationsMap = getFirestationsMap();
 		List<Person> personsServedByStationList = new ArrayList<>();
+
 		List<Address> addressesServedByStation = firestationsMap.get(stationNumber);
 		for (Address address : addressesServedByStation) {
 			List<Person> personsAtTheAddress = householdsMap.get(address);
@@ -64,11 +69,17 @@ public class FirestationsService implements IFirestationsService {
 
 	@Override
 	public PeopleAndCountForStationDTO getInfoOnPersonsServedByStation(int stationNumber) {
-		List<Person> personsServedByStationList = getPersonsServedByStation(stationNumber);
 		List<PersonOfStationDTO> personOfStationDTOList = new ArrayList<>();
 		int numberOfAdults = 0;
 		int numberOfChildren = 0;
 
+		Map<Integer, List<Address>> firestationsMap = getFirestationsMap();
+		if (!firestationsMap.containsKey(stationNumber)) {
+			LOGGER.error("Impossible to get persons served by station : non existent station number");
+			return null;
+		}
+
+		List<Person> personsServedByStationList = getPersonsServedByStation(stationNumber);
 		for (Person person : personsServedByStationList) {
 			PersonOfStationDTO personOfStationDTO = new PersonOfStationDTO(person.getFirstName(), person.getLastName(),
 					person.getAddress(), person.getPhone());
@@ -88,8 +99,16 @@ public class FirestationsService implements IFirestationsService {
 
 	@Override
 	public List<String> getPhoneOfPersonsServedByStation(int stationNumber) {
-		List<Person> personsServedByStationList = getPersonsServedByStation(stationNumber);
 		List<String> phonesList = new ArrayList<>();
+
+		Map<Integer, List<Address>> firestationsMap = getFirestationsMap();
+		if (!firestationsMap.containsKey(stationNumber)) {
+			LOGGER.error("Impossible to get phones for the station : non existent station number");
+			return null;
+		}
+
+		List<Person> personsServedByStationList = getPersonsServedByStation(stationNumber);
+
 		for (Person person : personsServedByStationList) {
 			String phone = person.getPhone();
 			phonesList.add(phone);
@@ -100,11 +119,16 @@ public class FirestationsService implements IFirestationsService {
 
 	@Override
 	public List<HouseholdDTO> getHouseholdsServedByStations(List<Integer> stationNumbersList) {
-
-		getFirestationsAndHouseholdsMaps();
+		Map<Integer, List<Address>> firestationsMap = getFirestationsMap();
+		Map<Address, List<Person>> householdsMap = getHouseholdsMap();
 		List<HouseholdDTO> householdsDTOList = new ArrayList<>();
 
 		for (int i : stationNumbersList) {
+			if (!firestationsMap.containsKey(i)) {
+				LOGGER.error("Impossible to get households served by station : non existent station number");
+				return null;
+			}
+
 			List<Address> addressesServedByStation = firestationsMap.get(i);
 			for (Address address : addressesServedByStation) {
 				List<Person> personsInHousehold = householdsMap.get(address);
@@ -125,36 +149,78 @@ public class FirestationsService implements IFirestationsService {
 
 	@Override
 	public void addFirestation(Firestation firestation) {
-		getFirestationsAndHouseholdsMaps();
-		allFirestationsList.add(firestation);
-		LOGGER.info("Adding a firestation");
+		Map<Integer, List<Address>> firestationsMap = getFirestationsMap();
+
+		if (firestation.getAdressesList() == null) {
+			LOGGER.error("Impossible to add firestation : missing adresses list");
+		} else if (firestationsMap.containsKey(firestation.getStationNumber())) {
+			LOGGER.error("Impossible to add firestation : existing station number");
+		} else {
+			List<Firestation> allFirestationsList = getFirestationsList();
+			allFirestationsList.add(firestation);
+			data.setFirestationsList(allFirestationsList);
+			LOGGER.info("Adding a firestation");
+		}
 	}
 
 	@Override
 	public void updateFirestation(String street, int newStationNumber) {
-		getFirestationsAndHouseholdsMaps();
-		for (Firestation firestation : allFirestationsList) {
-			List<Address> firestationAddressesList = firestation.getAdressesList();
-			for (Address address : firestationAddressesList) {
-				if (street.equals(address.getStreet())) {
-					firestation.setStationNumber(newStationNumber);
-					break;
+
+		if (street == null) {
+			LOGGER.error("Impossible to update firestation : missing street");
+		} else {
+			List<Firestation> allFirestationsList = getFirestationsList();
+			for (Firestation firestation : allFirestationsList) {
+				List<Address> firestationAddressesList = firestation.getAdressesList();
+				for (Address address : firestationAddressesList) {
+					if (street.equals(address.getStreet())) {
+						firestation.setStationNumber(newStationNumber);
+						data.setFirestationsList(allFirestationsList);
+						LOGGER.info("Updating a firestation");
+						break;
+					}
 				}
 			}
 		}
-		LOGGER.info("Updating a firestation");
 	}
 
 	@Override
 	public void deleteFirestation(int stationNumber) {
-		getFirestationsAndHouseholdsMaps();
-		for (Firestation firestation : allFirestationsList) {
-			if (stationNumber == firestation.getStationNumber()) {
-				int index = allFirestationsList.indexOf(firestation);
-				allFirestationsList.remove(index);
-				break;
+
+		Map<Integer, List<Address>> firestationsMap = getFirestationsMap();
+		if (!firestationsMap.containsKey(stationNumber)) {
+			LOGGER.error("Impossible to delete firestation : non existent station number");
+		} else {
+			List<Firestation> allFirestationsList = getFirestationsList();
+			for (Firestation firestation : allFirestationsList) {
+				if (stationNumber == firestation.getStationNumber()) {
+					int index = allFirestationsList.indexOf(firestation);
+					allFirestationsList.remove(index);
+					data.setFirestationsList(allFirestationsList);
+					LOGGER.info("Deleting a firestation");
+					break;
+				}
 			}
 		}
-		LOGGER.info("Deleting a firestation");
 	}
+
+//	@Override
+//	public void deleteAddressFromFirestation(String street) {
+//		List<Firestation> allFirestationsList = getFirestationsList();
+//		for (Firestation firestation : allFirestationsList) {
+//			List<Address> addressesServedByStation = firestation.getAdressesList();
+//			for (Address address : addressesServedByStation) {
+//				if (street == address.getStreet()) {
+//					int addressIndex = addressesServedByStation.indexOf(address);
+//					addressesServedByStation.remove(addressIndex);
+//					firestation.setAdressesList(addressesServedByStation);
+//					data.setFirestationsList(allFirestationsList);
+//					LOGGER.info("Deleting a firestation");
+//					break;
+//				}
+//			}
+//
+//		}
+//	}
+
 }
