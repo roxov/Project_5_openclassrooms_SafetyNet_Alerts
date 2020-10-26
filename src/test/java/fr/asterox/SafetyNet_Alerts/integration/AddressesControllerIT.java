@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-@SpringBootTest()
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
 public class AddressesControllerIT {
 
@@ -75,13 +75,9 @@ public class AddressesControllerIT {
 		assertTrue(findPeopleAndStationNumberOfAddressDTO(jsonPeopleAndStationNumber.getJSONArray("peopleOfAddress"),
 				"Stelzer", "841-874-7784", 6, List.of("noxidian:100mg", "pharmacol:2500mg"), new ArrayList<>()));
 
-		List<String> brianMedications = new ArrayList<>();
-		brianMedications.add("ibupurin:200mg");
-		brianMedications.add("hydrapermazol:400mg");
-		List<String> brianAllergies = new ArrayList<>();
-		brianAllergies.add("nillacilan");
 		assertTrue(findPeopleAndStationNumberOfAddressDTO(jsonPeopleAndStationNumber.getJSONArray("peopleOfAddress"),
-				"Stelzer", "841-874-7784", 44, brianMedications, brianAllergies));
+				"Stelzer", "841-874-7784", 44, List.of("ibupurin:200mg", "hydrapermazol:400mg"),
+				List.of("nillacilan")));
 	}
 
 	private boolean findPeopleAndStationNumberOfAddressDTO(JSONArray jsonPeople, String lastName, String phone, int age,

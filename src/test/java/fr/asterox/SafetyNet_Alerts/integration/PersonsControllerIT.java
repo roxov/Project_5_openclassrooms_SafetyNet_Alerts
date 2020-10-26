@@ -1,12 +1,24 @@
 package fr.asterox.SafetyNet_Alerts.integration;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+@SpringBootTest()
 @ExtendWith(SpringExtension.class)
 public class PersonsControllerIT {
 
@@ -16,10 +28,42 @@ public class PersonsControllerIT {
 	private String baseUrl;
 
 	@BeforeEach
-	public void setUpWebDriver() {
+	public void setUp() {
 		baseUrl = "http://localhost:" + port;
 	}
 
+	@Test
+	public void givenFirstNameAndUniqueLastName_whenGetInhabitantsInfo_thenReturnInformationOnPerson()
+			throws UnirestException, JSONException {
+		// GIVEN
+		String addressUrl = baseUrl + "/personInfo?firstName=Jonanathan&lastName=Marrack";
+
+		// WHEN
+		JSONArray jsonPersons = Unirest.get(addressUrl).asJson().getBody().getArray();
+		System.out.println(jsonPersons);
+
+		// THEN
+		assertTrue(findInfoOnPerson(jsonPersons, "Marrack", "29 15th St", 97451, 31, "drk@email.com", new ArrayList<>(),
+				new ArrayList<>()));
+	}
+
+	// (String lastName, Address address, int age, String email, MedicalRecords
+	// medicalRecords) {
+	private boolean findInfoOnPerson(JSONArray jsonPersons, String lastName, String street, int zip, int age,
+			String email, List<String> medications, List<String> allergies) throws JSONException {
+		for (int i = 0; i < jsonPersons.length(); i++) {
+			JSONObject person = jsonPersons.getJSONObject(i);
+			if (lastName.equals(person.getString("lastName")) && street.equals(person.getString("address"))
+					&& age == person.getInt("age") && email.equals(person.getString("email"))
+//					&& compareListString(person.getJSONObject("medicalRecords").getJSONArray("medications"),
+//							medications)
+//					&& compareListString(person.getJSONObject("medicalRecords").getJSONArray("allergies"), allergies)
+			) {
+				return true;
+			}
+		}
+		return false;
+	}
 //	@GetMapping(value = "/personInfo")
 //	public List<PersonInfoDTO> getInhabitantsInfo(@RequestParam String firstName, String lastName) {
 //		LOGGER.info("Getting Info on People With The Given Last Name for personInfo Request");

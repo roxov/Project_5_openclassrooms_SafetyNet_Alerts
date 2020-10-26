@@ -16,7 +16,7 @@ public class MedicalRecordsControllerIT {
 	private String baseUrl;
 
 	@BeforeEach
-	public void setUpWebDriver() {
+	public void setUp() {
 		baseUrl = "http://localhost:" + port;
 	}
 
