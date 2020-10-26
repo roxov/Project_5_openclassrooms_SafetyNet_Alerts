@@ -1,6 +1,5 @@
 package fr.asterox.SafetyNet_Alerts.service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Person;
-import fr.asterox.SafetyNet_Alerts.technical.ManipulateDate;
+import fr.asterox.SafetyNet_Alerts.technical.CalculateAge;
 import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
 
 @Service
@@ -20,10 +19,6 @@ public class PersonsService implements IPersonsService {
 
 	@Autowired
 	private Data data;
-
-	private List<Person> getPersonsList() {
-		return data.getPersonsList();
-	}
 
 	@Override
 	public List<PersonInfoDTO> getInhabitantsInfo(String firstName, String lastName) {
@@ -37,8 +32,7 @@ public class PersonsService implements IPersonsService {
 
 		for (Person person : allPersonsList) {
 			if (person.getLastName().equals(lastName)) {
-				LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
-				int age = LocalDate.now().getYear() - birthdate.getYear();
+				int age = CalculateAge.calculateAge(person.getBirthdate());
 				PersonInfoDTO personInfoDTO = new PersonInfoDTO(person.getLastName(), person.getAddress(), age,
 						person.getEmail(), person.getMedicalRecords());
 				personsSelectedByLastNameList.add(personInfoDTO);
@@ -71,11 +65,11 @@ public class PersonsService implements IPersonsService {
 		if (person.getFirstName() == null || person.getLastName() == null || person.getBirthdate() == null
 				|| person.getAddress() == null || person.getEmail() == null || person.getPhone() == null) {
 			LOGGER.error("Impossible to add person : missing fields");
-		} else {
-			allPersonsList.add(person);
-			data.setPersonsList(allPersonsList);
-			LOGGER.info("Adding a person");
+			return;
 		}
+		allPersonsList.add(person);
+		LOGGER.info("Adding a person");
+
 	}
 
 	@Override
@@ -85,18 +79,17 @@ public class PersonsService implements IPersonsService {
 		if (person.getFirstName() == null || person.getLastName() == null || person.getBirthdate() == null
 				|| person.getAddress() == null || person.getEmail() == null || person.getPhone() == null) {
 			LOGGER.error("Impossible to update person : missing fields");
-		} else {
-			for (Person personInList : allPersonsList) {
-				if (person.getFirstName().equals(personInList.getFirstName())
-						&& person.getLastName().equals(personInList.getLastName())) {
-					int index = allPersonsList.indexOf(personInList);
-					allPersonsList.set(index, person);
-					data.setPersonsList(allPersonsList);
-					LOGGER.info("Updating a person");
-					break;
-				} else {
-					LOGGER.error("Impossible to update person : no match found");
-				}
+			return;
+		}
+		for (Person personInList : allPersonsList) {
+			if (person.getFirstName().equals(personInList.getFirstName())
+					&& person.getLastName().equals(personInList.getLastName())) {
+				int index = allPersonsList.indexOf(personInList);
+				allPersonsList.set(index, person);
+				LOGGER.info("Updating a person");
+				break;
+			} else {
+				LOGGER.error("Impossible to update person : no match found");
 			}
 		}
 	}
@@ -107,18 +100,22 @@ public class PersonsService implements IPersonsService {
 
 		if (firstName == null || lastName == null) {
 			LOGGER.error("Impossible to delete person : empty first name or last name");
-		} else {
-			for (Person personInList : allPersonsList) {
-				if (firstName.equals(personInList.getFirstName()) && lastName.equals(personInList.getLastName())) {
-					int index = allPersonsList.indexOf(personInList);
-					allPersonsList.remove(index);
-					data.setPersonsList(allPersonsList);
-					LOGGER.info("Deleting a person");
-					break;
-				} else {
-					LOGGER.error("Impossible to delete person : no match found");
-				}
-			}
+			return;
 		}
+		for (Person personInList : allPersonsList) {
+			if (firstName.equals(personInList.getFirstName()) && lastName.equals(personInList.getLastName())) {
+				int index = allPersonsList.indexOf(personInList);
+				allPersonsList.remove(index);
+				LOGGER.info("Deleting a person");
+				break;
+			} else {
+				LOGGER.error("Impossible to delete person : no match found");
+			}
+
+		}
+	}
+
+	private List<Person> getPersonsList() {
+		return data.getPersonsList();
 	}
 }

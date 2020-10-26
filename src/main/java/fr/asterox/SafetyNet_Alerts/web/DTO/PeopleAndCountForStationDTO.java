@@ -8,6 +8,10 @@ public class PeopleAndCountForStationDTO {
 	int numberOfAdults;
 	int numberOfChildren;
 
+	public PeopleAndCountForStationDTO() {
+		super();
+	}
+
 	public PeopleAndCountForStationDTO(List<PersonOfStationDTO> peopleOfStation, int numberOfAdults,
 			int numberOfChildren) {
 		super();

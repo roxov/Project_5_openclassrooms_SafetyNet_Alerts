@@ -31,18 +31,33 @@ public class FirestationsController {
 	@Autowired
 	private FirestationsService firestationsService;
 
+	/**
+	 * endpoint : firestation?stationNumber=<station_number>
+	 * 
+	 * 
+	 */
 	@GetMapping(value = "/firestation")
 	public PeopleAndCountForStationDTO getInfoForPersonsServedByStation(@RequestParam int stationNumber) {
 		LOGGER.info("Getting People and Count of Children and Adults of the Station for Firestation Request");
 		return firestationsService.getInfoOnPersonsServedByStation(stationNumber);
 	}
 
+	/**
+	 * 
+	 * endpoint : phoneAlert?firestation=<firestation_number>
+	 * 
+	 */
 	@GetMapping(value = "/phoneAlert")
 	public List<String> getPhonesListAssignedToFirestation(@RequestParam int firestation) {
 		LOGGER.info("Getting Phones List Assigned To The Station for phoneAlert Request");
 		return firestationsService.getPhoneOfPersonsServedByStation(firestation);
 	}
 
+	/**
+	 * endpoint : flood/stations?stations=<a list of station_numbers>
+	 * 
+	 * 
+	 */
 	@GetMapping(value = "/flood/stations")
 	public List<HouseholdDTO> getHouseholdsServedByStations(@RequestParam List<Integer> stations) {
 		LOGGER.info("Getting People in Households Served By Station for Flood Request");
@@ -67,10 +82,10 @@ public class FirestationsController {
 		firestationsService.deleteFirestation(stationNumber);
 	}
 
-//	@DeleteMapping(value = "/firestation")
-//	public void deleteAddressFromFirestation(@RequestBody String street) {
-//		LOGGER.info("Deleting firestation");
-//		firestationsService.deleteAddressFromFirestation(street);
-//	}
+	@DeleteMapping(value = "/firestation/street")
+	public void deleteAddressFromFirestation(@RequestBody String street) {
+		LOGGER.info("Deleting firestation");
+		firestationsService.deleteAddressFromFirestation(street);
+	}
 
 }

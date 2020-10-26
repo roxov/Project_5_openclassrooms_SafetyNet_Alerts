@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ManipulateDate {
-	private static final Logger LOGGER = LogManager.getLogger(ManipulateDate.class);
+public class ConvertDate {
+	private static final Logger LOGGER = LogManager.getLogger(ConvertDate.class);
 
 	public static LocalDate convertStringToLocalDate(String date) {
 		if (date == null) {

@@ -39,8 +39,8 @@ public class GenerateData {
 	public static List<Firestation> firestationsList = new ArrayList<>();
 	public static List<Person> personsList = new ArrayList<>();
 
-	public void parseData() throws IOException {
-		String allData = FilePath.readDataSourceFile();
+	public void parseData(String filepath) throws IOException {
+		String allData = FilePath.readDataSourceFile(filepath);
 		iterator = JsonIterator.parse(allData);
 		for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
 			switch (field) {
@@ -181,13 +181,12 @@ public class GenerateData {
 	}
 
 	public void parseMedicalRecordsData() throws IOException {
-		String firstName = null;
-		String lastName = null;
-		String birthdate = null;
-		List<String> medicationsList = new ArrayList<>();
-		List<String> allergiesList = new ArrayList<>();
-
 		while (iterator.readArray()) {
+			String firstName = null;
+			String lastName = null;
+			String birthdate = null;
+			List<String> medicationsList = new ArrayList<>();
+			List<String> allergiesList = new ArrayList<>();
 			for (String field = iterator.readObject(); field != null; field = iterator.readObject()) {
 				switch (field) {
 				case "firstName":
@@ -251,9 +250,9 @@ public class GenerateData {
 		}
 	}
 
-	public Data generateData() throws IOException {
+	public Data generateData(String filepath) throws IOException {
 		Data data = new Data();
-		this.parseData();
+		this.parseData(filepath);
 
 		data.setPersonsList(personsList);
 

@@ -113,8 +113,7 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		List<PersonInfoDTO> emptyList = new ArrayList<>();
-		assertEquals(emptyList, result);
+		assertEquals(new ArrayList<>(), result);
 	}
 
 	@Test
@@ -147,8 +146,9 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		personsList.add(person2);
-		assertEquals(personsList, data.getPersonsList());
+		assertEquals(2, personsList.size());
+		assertEquals("fname1", personsList.get(0).getFirstName());
+		assertEquals("fname2", personsList.get(1).getFirstName());
 	}
 
 	@Test
@@ -163,7 +163,12 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		assertEquals(1, personsList.size());
+		assertEquals("fname1", personsList.get(0).getFirstName());
+		assertEquals("lname1", personsList.get(0).getLastName());
+		assertEquals(address, personsList.get(0).getAddress());
+		assertEquals("phone1", personsList.get(0).getPhone());
+		assertEquals("email1", personsList.get(0).getEmail());
 	}
 
 	@Test
@@ -178,9 +183,12 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		List<Person> resultList = new ArrayList<>();
-		resultList.add(updatedPerson);
-		assertEquals(resultList, data.getPersonsList());
+		assertEquals(1, personsList.size());
+		assertEquals("fname1", personsList.get(0).getFirstName());
+		assertEquals("lname1", personsList.get(0).getLastName());
+		assertEquals(address, personsList.get(0).getAddress());
+		assertEquals("phone2", personsList.get(0).getPhone());
+		assertEquals("email2", personsList.get(0).getEmail());
 	}
 
 	@Test
@@ -195,7 +203,12 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		assertEquals(1, personsList.size());
+		assertEquals("fname1", personsList.get(0).getFirstName());
+		assertEquals("lname1", personsList.get(0).getLastName());
+		assertEquals(address, personsList.get(0).getAddress());
+		assertEquals("phone1", personsList.get(0).getPhone());
+		assertEquals("email1", personsList.get(0).getEmail());
 	}
 
 	@Test
@@ -208,8 +221,7 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		List<Person> resultList = new ArrayList<>();
-		assertEquals(resultList, data.getPersonsList());
+		assertEquals(new ArrayList<>(), data.getPersonsList());
 	}
 
 	@Test
@@ -222,7 +234,12 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		assertEquals(1, personsList.size());
+		assertEquals("fname1", personsList.get(0).getFirstName());
+		assertEquals("lname1", personsList.get(0).getLastName());
+		assertEquals(address, personsList.get(0).getAddress());
+		assertEquals("phone1", personsList.get(0).getPhone());
+		assertEquals("email1", personsList.get(0).getEmail());
 	}
 
 	@Test
@@ -235,7 +252,12 @@ public class PersonsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		assertEquals(1, personsList.size());
+		assertEquals("fname1", personsList.get(0).getFirstName());
+		assertEquals("lname1", personsList.get(0).getLastName());
+		assertEquals(address, personsList.get(0).getAddress());
+		assertEquals("phone1", personsList.get(0).getPhone());
+		assertEquals("email1", personsList.get(0).getEmail());
 	}
 
 }

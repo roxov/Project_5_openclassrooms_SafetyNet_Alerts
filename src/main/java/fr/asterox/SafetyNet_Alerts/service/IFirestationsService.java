@@ -15,7 +15,6 @@ import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndCountForStationDTO;
 public interface IFirestationsService {
 
 	/**
-	 * endpoint : firestation?stationNumber=<station_number>
 	 * 
 	 * @param stationNumber
 	 * @return the list of people served by station and the count of adults and
@@ -27,7 +26,6 @@ public interface IFirestationsService {
 
 	/**
 	 * 
-	 * endpoint : phoneAlert?firestation=<firestation_number>
 	 * 
 	 * @param stationNumber
 	 * @return phonesList, the phones list of persons served by station
@@ -36,7 +34,6 @@ public interface IFirestationsService {
 	public List<String> getPhoneOfPersonsServedByStation(int stationNumber);
 
 	/**
-	 * endpoint : flood/stations?stations=<a list of station_numbers>
 	 * 
 	 * @param stationNumbersList
 	 * @return householdsDTOList, the list oh households and their occupants served
@@ -51,5 +48,5 @@ public interface IFirestationsService {
 
 	public void deleteFirestation(int stationNumber);
 
-//	public void deleteAddressFromFirestation(String street);
+	public void deleteAddressFromFirestation(String street);
 }

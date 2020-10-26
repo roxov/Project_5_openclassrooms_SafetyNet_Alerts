@@ -25,7 +25,7 @@ public class SafetyNetAlertsApplication {
 
 	@Bean
 	public Data getData() throws IOException {
-		return new GenerateData().generateData();
+		return new GenerateData().generateData("src/main/resources/data.json");
 	}
 
 	@Bean

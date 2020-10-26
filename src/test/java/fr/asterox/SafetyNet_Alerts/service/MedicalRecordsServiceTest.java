@@ -34,13 +34,15 @@ public class MedicalRecordsServiceTest {
 	private List<Person> personsList;
 	private Address address;
 	private MedicalRecords medicalRecords;
+	List<String> medications;
+	List<String> allergies;
 
 	@BeforeEach
 	private void setUpPerTest() {
 		address = new Address("street", 123, "city");
-		List<String> medications = new ArrayList<>();
+		medications = new ArrayList<>();
 		medications.add("medications1");
-		List<String> allergies = new ArrayList<>();
+		allergies = new ArrayList<>();
 		allergies.add("allergies1");
 		medicalRecords = new MedicalRecords(medications, allergies);
 
@@ -82,7 +84,11 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		List<String> medicationsResult = personsList.get(0).getMedicalRecords().getMedications();
+		List<String> allergiesResult = personsList.get(0).getMedicalRecords().getAllergies();
+		assertEquals(medications, medicationsResult);
+		assertEquals(allergies, allergiesResult);
+
 	}
 
 	@Test
@@ -95,7 +101,10 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		List<String> medicationsResult = personsList.get(0).getMedicalRecords().getMedications();
+		List<String> allergiesResult = personsList.get(0).getMedicalRecords().getAllergies();
+		assertEquals(medications, medicationsResult);
+		assertEquals(allergies, allergiesResult);
 	}
 
 	@Test
@@ -108,7 +117,10 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		List<String> medicationsResult = personsList.get(0).getMedicalRecords().getMedications();
+		List<String> allergiesResult = personsList.get(0).getMedicalRecords().getAllergies();
+		assertEquals(medications, medicationsResult);
+		assertEquals(allergies, allergiesResult);
 	}
 
 	@Test
@@ -126,17 +138,18 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		List<Person> resultList = new ArrayList<>();
-		List<String> resultMedications = new ArrayList<>();
-		resultMedications.add("medications2");
-		resultMedications.add("medications1");
-		List<String> resultAllergies = new ArrayList<>();
-		resultAllergies.add("allergies2");
-		resultAllergies.add("allergies1");
-		MedicalRecords resultMedicalRecords = new MedicalRecords(resultMedications, resultAllergies);
-		resultList.add(new Person("fname1", "lname1", "01/01/1980", address, "phone1", "email1", resultMedicalRecords));
 
-		assertEquals(resultList, data.getPersonsList());
+		List<String> medicationsResult = personsList.get(0).getMedicalRecords().getMedications();
+		List<String> allergiesResult = personsList.get(0).getMedicalRecords().getAllergies();
+		List<String> updatedMedications = new ArrayList<>();
+		updatedMedications.add("medications2");
+		updatedMedications.add("medications1");
+		List<String> updatedAllergies = new ArrayList<>();
+		updatedAllergies.add("allergies2");
+		updatedAllergies.add("allergies1");
+
+		assertEquals(updatedMedications, medicationsResult);
+		assertEquals(updatedAllergies, allergiesResult);
 	}
 
 	@Test
@@ -154,7 +167,10 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		List<String> medicationsResult = personsList.get(0).getMedicalRecords().getMedications();
+		List<String> allergiesResult = personsList.get(0).getMedicalRecords().getAllergies();
+		assertEquals(medications, medicationsResult);
+		assertEquals(allergies, allergiesResult);
 	}
 
 	@Test
@@ -172,7 +188,10 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		List<String> medicationsResult = personsList.get(0).getMedicalRecords().getMedications();
+		List<String> allergiesResult = personsList.get(0).getMedicalRecords().getAllergies();
+		assertEquals(medications, medicationsResult);
+		assertEquals(allergies, allergiesResult);
 	}
 
 	@Test
@@ -185,9 +204,13 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		List<Person> resultList = new ArrayList<>();
-		resultList.add(new Person("fname1", "lname1", "01/01/1980", address, "phone1", "email1", null));
-		assertEquals(resultList, data.getPersonsList());
+		assertEquals("fname1", personsList.get(0).getFirstName());
+		assertEquals("lname1", personsList.get(0).getLastName());
+		assertEquals("01/01/1980", personsList.get(0).getBirthdate());
+		assertEquals(address, personsList.get(0).getAddress());
+		assertEquals("phone1", personsList.get(0).getPhone());
+		assertEquals("email1", personsList.get(0).getEmail());
+		assertEquals(new MedicalRecords(new ArrayList<>(), new ArrayList<>()), personsList.get(0).getMedicalRecords());
 	}
 
 	@Test
@@ -200,7 +223,10 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		List<String> medicationsResult = personsList.get(0).getMedicalRecords().getMedications();
+		List<String> allergiesResult = personsList.get(0).getMedicalRecords().getAllergies();
+		assertEquals(medications, medicationsResult);
+		assertEquals(allergies, allergiesResult);
 	}
 
 	@Test
@@ -213,7 +239,10 @@ public class MedicalRecordsServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertEquals(personsList, data.getPersonsList());
+		List<String> medicationsResult = personsList.get(0).getMedicalRecords().getMedications();
+		List<String> allergiesResult = personsList.get(0).getMedicalRecords().getAllergies();
+		assertEquals(medications, medicationsResult);
+		assertEquals(allergies, allergiesResult);
 	}
 
 }

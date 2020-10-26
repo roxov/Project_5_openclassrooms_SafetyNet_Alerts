@@ -26,12 +26,21 @@ public class AddressesController {
 	@Autowired
 	private AddressesService addressesService;
 
+	/**
+	 * endpoint : childAlert?address=<address>
+	 * 
+	 */
 	@GetMapping(value = "/childAlert")
 	public List<ChildDTO> getPersonsLivingInChildHousehold(@RequestParam String address) {
 		LOGGER.info("Getting persons living in Child Household for ChildAlert Request");
 		return addressesService.getPersonsLivingInChildHousehold(address);
 	}
 
+	/**
+	 * 
+	 * endpoint : fire?address=<address>
+	 * 
+	 */
 	@GetMapping(value = "/fire")
 	public PeopleAndStationNumberOfAddressDTO getInhabitantsAndStationOfTheAddress(@RequestParam String address) {
 		LOGGER.info("Getting People and Station Number for Fire Request");

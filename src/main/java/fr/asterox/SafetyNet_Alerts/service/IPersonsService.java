@@ -13,7 +13,6 @@ import fr.asterox.SafetyNet_Alerts.web.DTO.PersonInfoDTO;
 
 public interface IPersonsService {
 	/**
-	 * endpoint : personInfo?firstName=<firstName>&lastName=<lastName>
 	 * 
 	 * @param firstName
 	 * @param lastName
@@ -24,7 +23,6 @@ public interface IPersonsService {
 	public List<PersonInfoDTO> getInhabitantsInfo(String firstName, String lastName);
 
 	/**
-	 * endpoint : communityEmail?city=<city>
 	 * 
 	 * @param city
 	 * @return emailsListOfTheCity

@@ -12,10 +12,9 @@ public class FilePath {
 	public FileReader filereader;
 	private static final Logger LOGGER = LogManager.getLogger(GenerateData.class);
 
-	// si static, impossible de mocker et je ne veux pas tester le fichier d'origine
-	public static String readDataSourceFile() throws IOException {
+	public static String readDataSourceFile(String filepath) throws IOException {
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/data.json"));
+			BufferedReader reader = new BufferedReader(new FileReader(filepath));
 			StringBuilder stbuilder = new StringBuilder();
 			String line = reader.readLine();
 			while (line != null) {

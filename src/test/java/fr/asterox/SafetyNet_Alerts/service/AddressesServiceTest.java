@@ -2,6 +2,7 @@
 package fr.asterox.SafetyNet_Alerts.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -103,7 +104,7 @@ public class AddressesServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getHouseholdsList();
-		assertEquals(null, result);
+		assertEquals(new ArrayList<>(), result);
 	}
 
 	@Test
@@ -130,7 +131,7 @@ public class AddressesServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getHouseholdsList();
-		assertEquals(null, result);
+		assertEquals(new ArrayList<>(), result);
 	}
 
 	@Test
@@ -213,7 +214,7 @@ public class AddressesServiceTest {
 
 		// THEN
 		verify(data, Mockito.times(1)).getHouseholdsList();
-		assertEquals(null, result);
+		assertNull(result);
 	}
 
 	@Test
@@ -222,7 +223,7 @@ public class AddressesServiceTest {
 		PeopleAndStationNumberOfAddressDTO result = addressesService.getInhabitantsAndStationOfTheAddress(null);
 
 		// THEN
-		assertEquals(null, result);
+		assertNull(result);
 	}
 
 }

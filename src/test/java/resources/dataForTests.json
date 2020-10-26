@@ -1,0 +1,22 @@
+{
+    "persons": [
+        { "firstName":"fname1", "lastName":"lname1", "address":"street1", "city":"Culver", "zip":"123", "phone":"phone1", "email":"email1" },
+        { "firstName":"fname2", "lastName":"lname2", "address":"street1", "city":"Culver", "zip":"123", "phone":"phone2", "email":"email2" },
+        { "firstName":"fname3", "lastName":"lname3", "address":"street2", "city":"Culver", "zip":"123", "phone":"phone3", "email":"email3" },
+        { "firstName":"fname4", "lastName":"lname4", "address":"street3", "city":"Culver", "zip":"123", "phone":"phone4", "email":"email4" },
+        { "firstName":"fname5", "lastName":"lname5", "address":"street4", "city":"Culver", "zip":"123", "phone":"phone5", "email":"email5" }
+        ], 
+    "firestations": [
+	{ "address":"street1", "station":"3" },
+        { "address":"street2", "station":"2" },
+        { "address":"street4", "station":"1" },
+        { "address":"street3", "station":"2" }
+	],
+    "medicalrecords": [
+        { "firstName":"fname1", "lastName":"lname1", "birthdate":"01/01/1989", "medications":["medications1", "medications2", "medications3"], "allergies":[] },
+        { "firstName":"fname2", "lastName":"lname2", "birthdate":"01/01/2012", "medications":[], "allergies":["allergies1"] },
+        { "firstName":"fname3", "lastName":"lname3", "birthdate":"01/01/2017", "medications":[], "allergies":[] },
+        { "firstName":"fname4", "lastName":"lname4","birthdate":"01/01/1986", "medications":["medications1"], "allergies":["allergies1"] },
+        { "firstName":"fname5", "lastName":"lname5", "birthdate":"01/01/1989", "medications":[], "allergies":[] }
+        ] 
+}

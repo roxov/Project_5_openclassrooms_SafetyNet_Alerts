@@ -1,7 +1,7 @@
 package fr.asterox.SafetyNet_Alerts.service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +14,7 @@ import fr.asterox.SafetyNet_Alerts.model.Data;
 import fr.asterox.SafetyNet_Alerts.model.Firestation;
 import fr.asterox.SafetyNet_Alerts.model.Household;
 import fr.asterox.SafetyNet_Alerts.model.Person;
-import fr.asterox.SafetyNet_Alerts.technical.ManipulateDate;
+import fr.asterox.SafetyNet_Alerts.technical.CalculateAge;
 import fr.asterox.SafetyNet_Alerts.web.DTO.ChildDTO;
 import fr.asterox.SafetyNet_Alerts.web.DTO.FireAndFloodPersonDTO;
 import fr.asterox.SafetyNet_Alerts.web.DTO.PeopleAndStationNumberOfAddressDTO;
@@ -26,19 +26,11 @@ public class AddressesService implements IAddressesService {
 	@Autowired
 	private Data data;
 
-	private List<Firestation> getFirestationsList() {
-		return data.getFirestationsList();
-	}
-
-	private List<Household> getHouseholdsList() {
-		return data.getHouseholdsList();
-	}
-
 	@Override
 	public List<ChildDTO> getPersonsLivingInChildHousehold(String street) {
-		List<Person> personsInHousehold = new ArrayList<>();
 		List<ChildDTO> childrenInHousehold = new ArrayList<>();
 		List<ChildDTO> adultsInHousehold = new ArrayList<>();
+		boolean foundStreet = false;
 
 		if (street == null) {
 			LOGGER.error("Impossible to get information : empty street");
@@ -49,28 +41,30 @@ public class AddressesService implements IAddressesService {
 
 		for (Household household : allHouseholdsList) {
 			if (household.getAddress().getStreet().equals(street)) {
-				personsInHousehold = household.getPersonsList();
+				List<Person> personsInHousehold = household.getPersonsList();
 				for (Person person : personsInHousehold) {
-					LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
-					if (birthdate.plusYears(18).isAfter(LocalDate.now())) {
-						Integer age = LocalDate.now().getYear() - birthdate.getYear();
+					int age = CalculateAge.calculateAge(person.getBirthdate());
+					if (age <= 18) {
 						ChildDTO childDTO = new ChildDTO(person.getFirstName(), person.getLastName(), age);
 						childrenInHousehold.add(childDTO);
 					} else {
-						Integer age = LocalDate.now().getYear() - birthdate.getYear();
 						ChildDTO adult = new ChildDTO(person.getFirstName(), person.getLastName(), age);
 						adultsInHousehold.add(adult);
 					}
 				}
+				foundStreet = true;
 				break;
-			} else {
-				LOGGER.error("Impossible to get information : no match found");
-				return null;
+
 			}
 		}
+		if (!foundStreet) {
+			LOGGER.error("Impossible to get information : no match found");
+			return Collections.emptyList();
+		}
+
 		if (childrenInHousehold.isEmpty()) {
 			LOGGER.info("Response to Child Alert Request : No child at the address");
-			return null;
+			return Collections.emptyList();
 		}
 		for (ChildDTO adult : adultsInHousehold) {
 			childrenInHousehold.add(adult);
@@ -81,8 +75,7 @@ public class AddressesService implements IAddressesService {
 
 	@Override
 	public PeopleAndStationNumberOfAddressDTO getInhabitantsAndStationOfTheAddress(String street) {
-
-		List<Person> inhabitantsList = new ArrayList<>();
+		boolean foundStreet = false;
 		Integer stationNumber = null;
 		List<FireAndFloodPersonDTO> inhabitantsDTOList = new ArrayList<>();
 
@@ -95,19 +88,21 @@ public class AddressesService implements IAddressesService {
 
 		for (Household household : allHouseholdsList) {
 			if (household.getAddress().getStreet().equals(street)) {
-				inhabitantsList = household.getPersonsList();
+				List<Person> inhabitantsList = household.getPersonsList();
 				for (Person person : inhabitantsList) {
-					LocalDate birthdate = ManipulateDate.convertStringToLocalDate(person.getBirthdate());
-					Integer age = LocalDate.now().getYear() - birthdate.getYear();
+					int age = CalculateAge.calculateAge(person.getBirthdate());
 					FireAndFloodPersonDTO FirePersonDTO = new FireAndFloodPersonDTO(person.getLastName(),
 							person.getPhone(), age, person.getMedicalRecords());
 					inhabitantsDTOList.add(FirePersonDTO);
 				}
+				foundStreet = true;
 				break;
-			} else {
-				LOGGER.error("Impossible to get information : no match found");
-				return null;
 			}
+		}
+
+		if (!foundStreet) {
+			LOGGER.error("Impossible to get information : no match found");
+			return null;
 		}
 
 		List<Firestation> allFirestationsList = getFirestationsList();
@@ -122,5 +117,13 @@ public class AddressesService implements IAddressesService {
 		}
 		LOGGER.info("Response to Fire Request : Inhabitants and station number of the address");
 		return new PeopleAndStationNumberOfAddressDTO(inhabitantsDTOList, stationNumber);
+	}
+
+	private List<Firestation> getFirestationsList() {
+		return data.getFirestationsList();
+	}
+
+	private List<Household> getHouseholdsList() {
+		return data.getHouseholdsList();
 	}
 }

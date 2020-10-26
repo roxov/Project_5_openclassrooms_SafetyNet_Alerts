@@ -30,12 +30,21 @@ public class PersonsController {
 	@Autowired
 	private PersonsService personsService;
 
+	/**
+	 * endpoint : personInfo?firstName=<firstName>&lastName=<lastName>
+	 * 
+	 */
 	@GetMapping(value = "/personInfo")
 	public List<PersonInfoDTO> getInhabitantsInfo(@RequestParam String firstName, String lastName) {
 		LOGGER.info("Getting Info on People With The Given Last Name for personInfo Request");
 		return personsService.getInhabitantsInfo(firstName, lastName);
 	}
 
+	/**
+	 * endpoint : communityEmail?city=<city>
+	 * 
+	 * 
+	 */
 	@GetMapping(value = "/communityEmail")
 	public List<String> getEmailList(@RequestParam String city) {
 		LOGGER.info("Getting Emails List of the city for communityEmail Request");
