@@ -3,7 +3,9 @@ package fr.asterox.SafetyNet_Alerts.integration;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-@SpringBootTest()
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
 public class PersonsControllerIT {
 
@@ -40,42 +42,82 @@ public class PersonsControllerIT {
 
 		// WHEN
 		JSONArray jsonPersons = Unirest.get(addressUrl).asJson().getBody().getArray();
-		System.out.println(jsonPersons);
 
 		// THEN
 		assertTrue(findInfoOnPerson(jsonPersons, "Marrack", "29 15th St", 97451, 31, "drk@email.com", new ArrayList<>(),
 				new ArrayList<>()));
+		assertTrue(jsonPersons.length() == 1);
 	}
 
-	// (String lastName, Address address, int age, String email, MedicalRecords
-	// medicalRecords) {
+	@Test
+	public void givenLastNameUsedByMultiplePersons_whenGetInhabitantsInfo_thenReturnInformationOnPersons()
+			throws UnirestException, JSONException {
+		// GIVEN
+		String addressUrl = baseUrl + "/personInfo?firstName=Tony&lastName=Cooper";
+
+		// WHEN
+		JSONArray jsonPersons = Unirest.get(addressUrl).asJson().getBody().getArray();
+
+		// THEN
+		assertTrue(findInfoOnPerson(jsonPersons, "Cooper", "112 Steppes Pl", 97451, 26, "tcoop@ymail.com",
+				List.of("hydrapermazol:300mg", "dodoxadin:30mg"), List.of("shellfish")));
+		assertTrue(findInfoOnPerson(jsonPersons, "Cooper", "489 Manchester St", 97451, 26, "lily@email.com",
+				new ArrayList<>(), new ArrayList<>()));
+		assertTrue(jsonPersons.length() == 2);
+	}
+
 	private boolean findInfoOnPerson(JSONArray jsonPersons, String lastName, String street, int zip, int age,
 			String email, List<String> medications, List<String> allergies) throws JSONException {
 		for (int i = 0; i < jsonPersons.length(); i++) {
 			JSONObject person = jsonPersons.getJSONObject(i);
-			if (lastName.equals(person.getString("lastName")) && street.equals(person.getString("address"))
-					&& age == person.getInt("age") && email.equals(person.getString("email"))
-//					&& compareListString(person.getJSONObject("medicalRecords").getJSONArray("medications"),
-//							medications)
-//					&& compareListString(person.getJSONObject("medicalRecords").getJSONArray("allergies"), allergies)
-			) {
+			if (lastName.equals(person.getString("lastName"))
+					&& street.equals(person.getJSONObject("address").getString("street"))
+					&& zip == person.getJSONObject("address").getInt("zip") && age == person.getInt("age")
+					&& email.equals(person.getString("email"))
+					&& compareListString(person.getJSONObject("medicalRecords").getJSONArray("medications"),
+							medications)
+					&& compareListString(person.getJSONObject("medicalRecords").getJSONArray("allergies"), allergies)) {
 				return true;
 			}
 		}
 		return false;
 	}
-//	@GetMapping(value = "/personInfo")
-//	public List<PersonInfoDTO> getInhabitantsInfo(@RequestParam String firstName, String lastName) {
-//		LOGGER.info("Getting Info on People With The Given Last Name for personInfo Request");
-//		return personsService.getInhabitantsInfo(firstName, lastName);
-//	}
-//
-//	@GetMapping(value = "/communityEmail")
-//	public List<String> getEmailList(@RequestParam String city) {
-//		LOGGER.info("Getting Emails List of the city for communityEmail Request");
-//		return personsService.getEmailsListOfCity(city);
-//	}
-//
+
+	private boolean compareListString(JSONArray jsonList, List<String> list) throws JSONException {
+		Set<String> listElements = new HashSet<>();
+		for (int i = 0; i < jsonList.length(); i++) {
+			listElements.add(jsonList.getString(i));
+		}
+		if (jsonList.length() == list.size() && listElements.containsAll(list)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Test
+	public void givenCulver_whenEmailList_thenReturnEmailsOfCommunity() throws UnirestException, JSONException {
+		// GIVEN
+		String addressUrl = baseUrl + "/communityEmail?city=Culver";
+
+		// WHEN
+		JSONArray jsonEmails = Unirest.get(addressUrl).asJson().getBody().getArray();
+
+		// THEN
+		assertTrue(findEmail(jsonEmails, "jaboyd@email.com"));
+		assertTrue(findEmail(jsonEmails, "drk@email.com"));
+		assertTrue(findEmail(jsonEmails, "gramps@email.com"));
+		assertTrue(jsonEmails.length() == 23);
+	}
+
+	private boolean findEmail(JSONArray jsonEmails, String email) throws JSONException {
+		for (int i = 0; i < jsonEmails.length(); i++) {
+			if (email.equals(jsonEmails.getString(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 //	@PostMapping(value = "/person")
 //	public void addPerson(@RequestBody Person person) {
 //		LOGGER.info("Adding new Person");
@@ -92,29 +134,6 @@ public class PersonsControllerIT {
 //	public void deletePerson(@RequestParam String firstName, String lastName) {
 //		LOGGER.info("Deleting Person");
 //		personsService.deletePerson(firstName, lastName);
-//	}
-
-//
-//	@Test
-//	public void givenFirstNameAndLastName_whenGetInhabitantsInfo_thenReturnNullMedicalRecords() {
-//		// WHEN
-//		List<PersonInfoDTO> result = personsController.getInhabitantsInfo("John", "Boyd");
-//
-//		// THEN
-//		assertEquals("Boyd", result.get(0).getLastName());
-//		assertEquals("drk@email.com", result.get(1).getEmail());
-//		assertEquals("1509 Culver St", result.get(2).getAddress().getStreet());
-//	}
-//
-//	@Test
-//	public void givenACity_whenGetEmailList_thenReturnEmailsList() {
-//		// WHEN
-//		List<String> result = personsController.getEmailList("Culver");
-//
-//		// THEN
-//		assertEquals("jaboyd@email.com", result.get(0));
-//		assertEquals("drk@email.com", result.get(1));
-//		assertEquals("tenz@email.com", result.get(2));
 //	}
 
 }

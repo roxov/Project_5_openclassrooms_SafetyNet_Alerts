@@ -7,10 +7,6 @@ public class PeopleAndStationNumberOfAddressDTO {
 	private List<FireAndFloodPersonDTO> peopleOfAddress;
 	int stationNumber;
 
-	public PeopleAndStationNumberOfAddressDTO() {
-		super();
-	}
-
 	public PeopleAndStationNumberOfAddressDTO(List<FireAndFloodPersonDTO> peopleOfAddress, int stationNumber) {
 		super();
 		this.peopleOfAddress = peopleOfAddress;
@@ -21,16 +17,8 @@ public class PeopleAndStationNumberOfAddressDTO {
 		return peopleOfAddress;
 	}
 
-	public void setPeopleOfAddress(List<FireAndFloodPersonDTO> peopleOfAddress) {
-		this.peopleOfAddress = peopleOfAddress;
-	}
-
 	public int getStationNumber() {
 		return stationNumber;
-	}
-
-	public void setStationNumber(int stationNumber) {
-		this.stationNumber = stationNumber;
 	}
 
 }

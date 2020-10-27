@@ -21,32 +21,16 @@ public class FireAndFloodPersonDTO {
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
 	public String getPhone() {
 		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
 	}
 
 	public int getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
-		this.age = age;
-	}
-
 	public MedicalRecords getMedicalRecords() {
 		return medicalRecords;
-	}
-
-	public void setMedicalRecords(MedicalRecords medicalRecords) {
-		this.medicalRecords = medicalRecords;
 	}
 
 }

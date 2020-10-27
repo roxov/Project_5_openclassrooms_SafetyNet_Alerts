@@ -116,26 +116,6 @@
 				<version>3.7</version>
 			</plugin>
 
-			<!-- Couverture de code effectuée uniquement sur tests unitaires + intégration -->
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>jacoco-report</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<!-- Plugin pour générer les rapports de tests -->
 			<!-- Integration tests included in the phase "test" -->
 			<!-- Integration tests exluded in the phase "unit-testing" -->
@@ -149,21 +129,47 @@
 						<version>1.2.0</version>
 					</dependency>
 				</dependencies>
+				<configuration>
+					<excludes>
+						<exclude>**/*IT.java</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
-						<id>unit-testing</id>
+						<id>integration-test</id>
 						<goals>
 							<goal>test</goal>
 						</goals>
-						<phase>unit-testing</phase>
+						<phase>integration-test</phase>
 						<configuration>
 							<excludes>
 								<exclude>none</exclude>
 							</excludes>
 							<includes>
-								<exclude>**/*IT.java</exclude>
+								<include>**/*IT.java</include>
 							</includes>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+		<!-- Couverture de code effectuée uniquement sur tests unitaires + intégration -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jacoco-report</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

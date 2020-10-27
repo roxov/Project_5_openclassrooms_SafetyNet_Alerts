@@ -15,8 +15,4 @@ public class HouseholdDTO {
 		return PersonsListOfHousehold;
 	}
 
-	public void setPersonsListOfHousehold(List<FireAndFloodPersonDTO> personsListOfHousehold) {
-		PersonsListOfHousehold = personsListOfHousehold;
-	}
-
 }

@@ -24,24 +24,12 @@ public class PeopleAndCountForStationDTO {
 		return peopleOfStation;
 	}
 
-	public void setPeopleOfStation(List<PersonOfStationDTO> peopleOfStation) {
-		this.peopleOfStation = peopleOfStation;
-	}
-
 	public int getNumberOfAdults() {
 		return numberOfAdults;
 	}
 
-	public void setNumberOfAdults(int numberOfAdults) {
-		this.numberOfAdults = numberOfAdults;
-	}
-
 	public int getNumberOfChildren() {
 		return numberOfChildren;
-	}
-
-	public void setNumberOfChildren(int numberOfChildren) {
-		this.numberOfChildren = numberOfChildren;
 	}
 
 }
