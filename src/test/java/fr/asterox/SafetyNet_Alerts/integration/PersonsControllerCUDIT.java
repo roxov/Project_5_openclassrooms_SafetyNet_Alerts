@@ -1,6 +1,6 @@
 package fr.asterox.SafetyNet_Alerts.integration;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +26,7 @@ import kong.unirest.json.JSONException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
-public class MedicalRecordsControllerIT {
+public class PersonsControllerCUDIT {
 
 	@LocalServerPort
 	private Integer port;
@@ -41,10 +41,34 @@ public class MedicalRecordsControllerIT {
 		baseUrl = "http://localhost:" + port;
 	}
 
+//	@Test
+//	public void givenNewPerson_whenAddPerson_thenReturnDataWithThePerson() throws UnirestException, JSONException {
+//		// GIVEN
+//		String addressUrl = baseUrl + "/person";
+//
+//		// WHEN
+//		Person Marie = new Person("Marie", "Boyd", "03/06/2019", new Address("1509 Culver St", 97451, "Culver"),
+//				"841-874-6512", "jaboyd@email.com", new MedicalRecords(new ArrayList<>(), new ArrayList<>()));
+//		Unirest.post(addressUrl)
+//				.body(new Person("Marie", "Boyd", "03/06/2019", new Address("1509 Culver St", 97451, "Culver"),
+//						"841-874-6512", "jaboyd@email.com", new MedicalRecords(new ArrayList<>(), new ArrayList<>())))
+//				.asEmpty();
+//
+//		// {"firstName":"Marie","lastName":"Boyd","birthdate":"03/06/2019","address":{"street":"1509
+//		// Culver St",
+//		// "zip":97451,"city":"Culver"},"phone":"841-874-6512","email":"jaboyd@email.com",
+//		// "medicalRecords":{"medications":[],"allergies":[]}}
+//
+//		// THEN
+//		List<Person> personsList = data.getPersonsList();
+//
+//		assertTrue(personsList.contains(Marie));
+//	}
+
 	@Test
-	public void givenAPerson_whenDeleteMedicalRecords_thenReturnListWithoutMedicalRecordsForThisPerson()
-			throws UnirestException, JSONException {
+	public void givenAPerson_whenDeletePerson_thenReturnListWithoutThePerson() throws UnirestException, JSONException {
 		// GIVEN
+		String addressUrl = baseUrl + "/person?firstName=John&lastName=Boyd";
 		List<Person> personsList = new ArrayList<>();
 		Person John = new Person("John", "Boyd", "03/06/1984", new Address("1509 Culver St", 97451, "Culver"),
 				"841-874-6512", "jaboyd@email.com",
@@ -52,28 +76,23 @@ public class MedicalRecordsControllerIT {
 		personsList.add(John);
 		when(data.getPersonsList()).thenReturn(personsList);
 
-		String addressUrl = baseUrl + "/medicalRecord?firstName=John&lastName=Boyd";
-
 		// WHEN
 		Unirest.delete(addressUrl).asEmpty();
 
 		// THEN
-		Person EmptyJohn = new Person("John", "Boyd", "03/06/1984", new Address("1509 Culver St", 97451, "Culver"),
-				"841-874-6512", "jaboyd@email.com", new MedicalRecords(new ArrayList<>(), new ArrayList<>()));
 		verify(data, Mockito.times(1)).getPersonsList();
-		assertTrue(personsList.contains(EmptyJohn));
+		assertFalse(personsList.contains(John));
 	}
 
-//	@PostMapping(value = "/medicalRecord")
-//	public void addMedicalRecords(@RequestBody String firstName, String lastName, MedicalRecords medicalRecords) {
-//		LOGGER.info("Adding new Medical Records");
-//		medicalRecordsService.addMedicalRecords(firstName, lastName, medicalRecords);
+//	@PostMapping(value = "/person")
+//	public void addPerson(@RequestBody Person person) {
+//		LOGGER.info("Adding new Person");
+//		personsService.addPerson(person);
 //	}
 //
-//	@PutMapping(value = "/medicalRecord")
-//	public void updateMedicalRecords(@RequestBody String firstName, String lastName, MedicalRecords medicalRecords) {
-//		LOGGER.info("Updating Medical Records");
-//		medicalRecordsService.updateMedicalRecords(firstName, lastName, medicalRecords);
+//	@PutMapping(value = "/person")
+//	public void updatePerson(@RequestBody Person person) {
+//		LOGGER.info("Updating Person");
+//		personsService.updatePerson(person);
 //	}
-
 }

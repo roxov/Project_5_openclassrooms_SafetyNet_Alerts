@@ -82,10 +82,12 @@
 			<version>4.2.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.mashape.unirest</groupId>
+			<groupId>com.konghq</groupId>
 			<artifactId>unirest-java</artifactId>
-			<version>1.4.9</version>
+			<version>3.11.02</version>
+			<classifier>standalone</classifier>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jtwig</groupId>
 			<artifactId>jtwig-core</artifactId>
@@ -152,8 +154,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-		<!-- Couverture de code effectuée uniquement sur tests unitaires + intégration -->
+
+			<!-- Couverture de code effectuée uniquement sur tests unitaires + intégration -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>

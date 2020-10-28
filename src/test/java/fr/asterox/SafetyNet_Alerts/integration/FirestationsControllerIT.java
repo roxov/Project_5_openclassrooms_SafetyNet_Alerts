@@ -8,9 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,8 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONException;
+import kong.unirest.json.JSONObject;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
@@ -165,11 +165,5 @@ public class FirestationsControllerIT {
 ////	public void deleteAddressFromFirestation(@RequestBody String street) {
 ////		LOGGER.info("Deleting firestation");
 ////		firestationsService.deleteAddressFromFirestation(street);
-////	}
-//	@Test
-//	public void givenAStationNumber_whenGetInfoForPersonsServedByStation_thenReturnPeopleServedByStationAndCountOfAdultsAndChildren()
-//			throws Exception {
-//		mockMvc.perform(delete("/firestation").param("stationNumber", "1"));
-//		verify(firestationsController).deleteFirestation(1);
-//	}
+
 }
